@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+
+<body style="margin: 0px;">
+  <head>
+    <meta charset="utf-8"/>
+  </head>
+  <script type="module">
+    import init from './out/bevy_2048.js'
+
+    init().catch((error) => {
+      if (!error.message.startsWith("Using exceptions for control flow, don't mind me. This isn't actually an error!")) {
+        throw error;
+      }
+    });
+  </script>
+</body>
+
+</html>
+

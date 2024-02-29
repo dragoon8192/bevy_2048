@@ -1,6 +1,10 @@
 [package]
 name = "bevy_2048"
 version = "0.1.0"
+authors = ["dragoon8192 <dragoon8192@gmail.com>"]
+description = "The 2048 Game on Bevy"
+license = "MIT"
+repository = "https://github.com/dragoon8192/bevy_2048"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -8,3 +12,7 @@ edition = "2021"
 [dependencies]
 bevy = "0.13.0"
 itertools = "0.12.1"
+wasm-bindgen = "0.2.91"
+
+[target.wasm32-unknown-unknown]
+runner = "wasm-server-runner"
