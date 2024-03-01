@@ -179,29 +179,6 @@ fn send_move_event_from_keyboard(
     }
 }
 
-fn send_move_event_from_touch(
-    mut touch_evr: EventReader<TouchInput>,
-    // mut move_evw: EventWriter<MoveEvent>,
-) {
-    use bevy::input::touch::TouchPhase;
-    for ev in touch_evr.read() {
-        match ev.phase {
-            TouchPhase::Started => {
-                println!("Touch {} started at: {:?}", ev.id, ev.position);
-            }
-            TouchPhase::Moved => {
-                println!("Touch {} moved to: {:?}", ev.id, ev.position);
-            }
-            TouchPhase::Ended => {
-                println!("Touch {} ended at: {:?}", ev.id, ev.position);
-            }
-            TouchPhase::Canceled => {
-                println!("Touch {} cancelled at: {:?}", ev.id, ev.position);
-            }
-        }
-    }
-}
-
 fn main() {
     let window = Window {
         title: "2048".to_string(),
