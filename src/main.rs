@@ -66,10 +66,10 @@ fn create_tile(commands: &mut Commands, num: u64, position: Position) {
 }
 
 fn move_tiles_system(
-    mut ev_move: EventReader<MoveEvent>,
+    mut move_evr: EventReader<MoveEvent>,
     mut query: Query<(&mut Transform, &mut Position), With<Tile>>,
 ) {
-    for ev in ev_move.read() {
+    for ev in move_evr.read() {
         // 移動方向と回転回数
         let (dx, dy, rot) = match ev {
             MoveEvent::Left => (-1, 0, 3),
@@ -164,15 +164,41 @@ enum MoveEvent {
     Down,
 }
 
-fn send_move_event(keyboard: Res<ButtonInput<KeyCode>>, mut ev_move: EventWriter<MoveEvent>) {
+fn send_move_event_from_keyboard(
+    keyboard: Res<ButtonInput<KeyCode>>,
+    mut move_evw: EventWriter<MoveEvent>,
+) {
     if keyboard.just_pressed(KeyCode::ArrowLeft) {
-        ev_move.send(MoveEvent::Left);
+        move_evw.send(MoveEvent::Left);
     } else if keyboard.just_pressed(KeyCode::ArrowRight) {
-        ev_move.send(MoveEvent::Right);
+        move_evw.send(MoveEvent::Right);
     } else if keyboard.just_pressed(KeyCode::ArrowUp) {
-        ev_move.send(MoveEvent::Up);
+        move_evw.send(MoveEvent::Up);
     } else if keyboard.just_pressed(KeyCode::ArrowDown) {
-        ev_move.send(MoveEvent::Down);
+        move_evw.send(MoveEvent::Down);
+    }
+}
+
+fn send_move_event_from_touch(
+    mut touch_evr: EventReader<TouchInput>,
+    // mut move_evw: EventWriter<MoveEvent>,
+) {
+    use bevy::input::touch::TouchPhase;
+    for ev in touch_evr.read() {
+        match ev.phase {
+            TouchPhase::Started => {
+                println!("Touch {} started at: {:?}", ev.id, ev.position);
+            }
+            TouchPhase::Moved => {
+                println!("Touch {} moved to: {:?}", ev.id, ev.position);
+            }
+            TouchPhase::Ended => {
+                println!("Touch {} ended at: {:?}", ev.id, ev.position);
+            }
+            TouchPhase::Canceled => {
+                println!("Touch {} cancelled at: {:?}", ev.id, ev.position);
+            }
+        }
     }
 }
 
@@ -192,7 +218,8 @@ fn main() {
         }))
         .add_systems(Startup, setup)
         .add_event::<MoveEvent>()
-        .add_systems(Update, send_move_event)
+        .add_systems(Update, send_move_event_from_keyboard)
+        .add_systems(Update, send_move_event_from_touch)
         .add_systems(Update, move_tiles_system)
         .add_systems(Update, bevy::window::close_on_esc)
         .run();
