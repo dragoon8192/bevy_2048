@@ -1,3 +1,4 @@
+use bevy::app::*;
 use bevy::prelude::*;
 use itertools::iproduct;
 
@@ -6,10 +7,6 @@ const TILE_SIZE: f32 = 60.0;
 const TILE_SIZE_2D: Option<Vec2> = Some(Vec2::new(TILE_SIZE, TILE_SIZE));
 const BOARD_SIZE_2D: Option<Vec2> = Some(Vec2::new(TILE_SIZE * 4.4, TILE_SIZE * 4.4));
 const SIDE_LENGTH: usize = 4;
-
-// fn range_prod() -> structs::Product<ops::Range<i32>, ops::Range<i32>> {
-//     return iproduct!(0..SIDE_LENGTH as i32, 0..SIDE_LENGTH as i32);
-// }
 
 #[derive(Debug, Clone, PartialEq, Eq, Component)]
 struct Position {
@@ -44,7 +41,7 @@ impl From<Tile> for Color {
             4 => Color::ORANGE,
             8 => Color::ORANGE_RED,
             _ => Color::RED,
-            // #TODO
+            // TODO
         }
     }
 }
@@ -179,6 +176,13 @@ fn send_move_event_from_keyboard(
     }
 }
 
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+pub enum GameState {
+    #[default]
+    Move,
+    Spawn,
+}
+
 fn main() {
     let window = Window {
         title: "2048".to_string(),
@@ -194,9 +198,9 @@ fn main() {
             ..default()
         }))
         .add_systems(Startup, setup)
+        .init_state::<GameState>()
         .add_event::<MoveEvent>()
         .add_systems(Update, send_move_event_from_keyboard)
-        .add_systems(Update, send_move_event_from_touch)
         .add_systems(Update, move_tiles_system)
         .add_systems(Update, bevy::window::close_on_esc)
         .run();
