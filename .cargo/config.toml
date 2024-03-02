@@ -1,2 +1,8 @@
+[build]
+target = "wasm32-unknown-unknown"
+
+[env]
+WASM_SERVER_RUNNER_ADDRESS = "0.0.0.0"
+
 [target.wasm32-unknown-unknown]
 runner = "wasm-server-runner"
