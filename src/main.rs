@@ -65,7 +65,9 @@ fn create_tile(commands: &mut Commands, num: u64, position: Position) {
 fn move_tiles_system(
     mut move_evr: EventReader<MoveEvent>,
     mut query: Query<(&mut Transform, &mut Position), With<Tile>>,
+    mut next_state: ResMut<NextState<GameState>>,
 ) {
+    let mut moved = false;
     for ev in move_evr.read() {
         // 移動方向と回転回数
         let (dx, dy, rot) = match ev {
@@ -74,6 +76,7 @@ fn move_tiles_system(
             MoveEvent::Up => (0, 1, 2),
             MoveEvent::Down => (0, -1, 0),
         };
+
         // 盤面の状態の取得
         let mut map: [[isize; SIDE_LENGTH]; SIDE_LENGTH] = [[0; SIDE_LENGTH]; SIDE_LENGTH];
 
@@ -103,6 +106,11 @@ fn move_tiles_system(
             pos.y = (pos.y as isize + dy * mv) as usize;
             *trans = pos.clone().into();
         }
+
+        moved = true;
+    }
+    if moved {
+        next_state.set(GameState::Spawn);
     }
 }
 
@@ -183,6 +191,10 @@ pub enum GameState {
     Spawn,
 }
 
+fn return_to_move_state(mut next_state: ResMut<NextState<GameState>>) {
+    next_state.set(GameState::Move);
+}
+
 fn main() {
     let window = Window {
         title: "2048".to_string(),
@@ -200,8 +212,14 @@ fn main() {
         .add_systems(Startup, setup)
         .init_state::<GameState>()
         .add_event::<MoveEvent>()
-        .add_systems(Update, send_move_event_from_keyboard)
-        .add_systems(Update, move_tiles_system)
+        .add_systems(
+            Update,
+            (move_tiles_system, send_move_event_from_keyboard).run_if(in_state(GameState::Move)),
+        )
+        .add_systems(
+            Update,
+            return_to_move_state.run_if(in_state(GameState::Spawn)),
+        )
         .add_systems(Update, bevy::window::close_on_esc)
         .run();
 }
