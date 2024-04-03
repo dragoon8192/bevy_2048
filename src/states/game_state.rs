@@ -14,7 +14,7 @@ pub enum GameState {
     GameOver,
 }
 
-pub fn check_game_over(
+pub fn check_and_set_game_over_state(
     mut query: Query<&Position, With<Tile>>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
