@@ -18,7 +18,7 @@ pub fn check_and_set_game_over_state(
     mut query: Query<&Position, With<Tile>>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
-    let mut lens: QueryLens<&Position> = query.transmute_lens();
+    let lens: QueryLens<&Position> = query.transmute_lens();
     if check_positions_are_full(lens) {
         // TODO Tile の合成可能性も確認
         next_state.set(GameState::GameOver);

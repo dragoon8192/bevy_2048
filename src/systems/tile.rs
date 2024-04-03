@@ -47,7 +47,7 @@ pub fn create_random_tile(
     mut query: Query<&Position, With<Tile>>,
     mut rng: ResMut<GlobalEntropy<WyRand>>,
 ) {
-    let mut lens: QueryLens<&Position> = query.transmute_lens::<&Position>();
+    let lens: QueryLens<&Position> = query.transmute_lens::<&Position>();
     let candidates_of_positions: BTreeSet<Position> = get_positions_complement_set(lens);
     let rnd_n = rng.next_u64() as usize % candidates_of_positions.len();
     let position = candidates_of_positions

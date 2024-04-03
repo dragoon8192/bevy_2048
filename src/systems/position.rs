@@ -15,7 +15,7 @@ fn generate_universal_position_set() -> BTreeSet<Position> {
     return BTreeSet::from_iter(iproduct!(0..SIDE_LENGTH, 0..SIDE_LENGTH).map(Position::from));
 }
 
-pub fn check_positions_are_full(mut lens: QueryLens<&Position>) -> bool {
+pub fn check_positions_are_full(lens: QueryLens<&Position>) -> bool {
     let positions_set = get_positions_set(lens);
     let univ_set = generate_universal_position_set();
     return positions_set == univ_set;
