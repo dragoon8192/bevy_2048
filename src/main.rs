@@ -15,6 +15,7 @@ use constants::WINDOW_SIZE;
 use events::move_event::emit_move_event_from_keyboard;
 use events::move_event::MoveEvent;
 use states::game_state::check_and_set_game_over_state;
+use states::game_state::end_game;
 use states::game_state::GameState;
 use systems::background_board::create_background_board;
 use systems::tile::create_random_tile;
@@ -58,6 +59,7 @@ fn main() {
                 .chain()
                 .run_if(in_state(GameState::Spawn)),
         )
+        .add_systems(OnEnter(GameState::GameOver), end_game)
         .add_systems(Update, bevy::window::close_on_esc)
         .run();
 }
