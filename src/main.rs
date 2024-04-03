@@ -1,6 +1,11 @@
 use bevy::app::*;
+use bevy::ecs::system::{Query, QueryLens};
 use bevy::prelude::*;
+use bevy_prng::WyRand;
+use bevy_rand::prelude::*;
 use itertools::iproduct;
+use rand_core::RngCore;
+use std::collections::BTreeSet;
 
 const WINDOW_SIZE: f32 = 500.0;
 const TILE_SIZE: f32 = 60.0;
@@ -8,7 +13,7 @@ const TILE_SIZE_2D: Option<Vec2> = Some(Vec2::new(TILE_SIZE, TILE_SIZE));
 const BOARD_SIZE_2D: Option<Vec2> = Some(Vec2::new(TILE_SIZE * 4.4, TILE_SIZE * 4.4));
 const SIDE_LENGTH: usize = 4;
 
-#[derive(Debug, Clone, PartialEq, Eq, Component)]
+#[derive(Component, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Debug)]
 struct Position {
     x: usize,
     y: usize,
@@ -25,13 +30,19 @@ impl Position {
     }
 }
 
+impl From<(usize, usize)> for Position {
+    fn from(value: (usize, usize)) -> Self {
+        return Position::new(value.0, value.1);
+    }
+}
+
 impl From<Position> for Transform {
     fn from(pos: Position) -> Self {
         return pos.to_transform(10.0);
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Clone, Copy)]
 struct Tile(u64);
 
 impl From<Tile> for Color {
@@ -46,14 +57,14 @@ impl From<Tile> for Color {
     }
 }
 
-fn create_tile(commands: &mut Commands, num: u64, position: Position) {
+fn create_tile(commands: &mut Commands, tile: Tile, position: Position) {
     commands
         .spawn_empty()
-        .insert(Tile(num))
+        .insert(tile)
         .insert(position.clone())
         .insert(SpriteBundle {
             sprite: Sprite {
-                color: Color::from(Tile(num)),
+                color: Color::from(tile),
                 custom_size: TILE_SIZE_2D,
                 ..Default::default()
             },
@@ -78,30 +89,27 @@ fn move_tiles_system(
         };
 
         // 盤面の状態の取得
-        let mut map: [[isize; SIDE_LENGTH]; SIDE_LENGTH] = [[0; SIDE_LENGTH]; SIDE_LENGTH];
-
-        for (_, pos) in query.iter() {
-            map[pos.x][pos.y] = 1;
-        }
+        let tiles_layout = get_tiles_layout(&mut query.transmute_lens::<&Position>());
+        let mut tiles_num = tiles_layout.map(|row| row.map(|b| if b { 1 } else { 0 }));
 
         for _ in 0..rot {
-            rotate_map_ccw(&mut map);
+            rotate_ccw(&mut tiles_num);
         }
 
         for i in 0..SIDE_LENGTH {
             let mut v = 0;
             for j in 0..SIDE_LENGTH {
-                v += 1 - map[i][j];
-                map[i][j] += v - 1;
+                v += 1 - tiles_num[i][j];
+                tiles_num[i][j] += v - 1;
             }
         }
 
         for _ in rot..4 {
-            rotate_map_ccw(&mut map);
+            rotate_ccw(&mut tiles_num);
         }
 
         for (mut trans, mut pos) in query.iter_mut() {
-            let mv = map[pos.x][pos.y];
+            let mv = tiles_num[pos.x][pos.y];
             pos.x = (pos.x as isize + dx * mv) as usize;
             pos.y = (pos.y as isize + dy * mv) as usize;
             *trans = pos.clone().into();
@@ -114,7 +122,7 @@ fn move_tiles_system(
     }
 }
 
-fn rotate_map_ccw(a: &mut [[isize; SIDE_LENGTH]; SIDE_LENGTH]) {
+fn rotate_ccw(a: &mut [[isize; SIDE_LENGTH]; SIDE_LENGTH]) {
     let mut b: [[isize; SIDE_LENGTH]; SIDE_LENGTH] = [[0; SIDE_LENGTH]; SIDE_LENGTH];
     for (i, j) in iproduct!(0..SIDE_LENGTH, 0..SIDE_LENGTH) {
         b[i][j] = a[SIDE_LENGTH - j - 1][i];
@@ -125,7 +133,7 @@ fn rotate_map_ccw(a: &mut [[isize; SIDE_LENGTH]; SIDE_LENGTH]) {
 #[derive(Component)]
 struct Background;
 
-fn create_board(commands: &mut Commands) {
+fn create_background_board(commands: &mut Commands) {
     // 大きな盤
     commands
         .spawn(SpriteBundle {
@@ -154,10 +162,10 @@ fn create_board(commands: &mut Commands) {
 
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    create_board(&mut commands);
+    create_background_board(&mut commands);
 
     for (i, j, num) in [(1, 0, 2), (3, 0, 4), (1, 3, 8)] {
-        create_tile(&mut commands, num, Position::new(i, j));
+        create_tile(&mut commands, Tile(num), Position::new(i, j));
     }
 }
 
@@ -195,6 +203,49 @@ fn return_to_move_state(mut next_state: ResMut<NextState<GameState>>) {
     next_state.set(GameState::Move);
 }
 
+// 盤面の状態の取得
+fn get_tiles_layout(lens: &mut QueryLens<&Position>) -> [[bool; SIDE_LENGTH]; SIDE_LENGTH] {
+    let mut tiles_layout: [[bool; SIDE_LENGTH]; SIDE_LENGTH] = [[false; SIDE_LENGTH]; SIDE_LENGTH];
+    for pos in lens.query().iter() {
+        tiles_layout[pos.x][pos.y] = true;
+    }
+    return tiles_layout;
+}
+
+fn get_positions_set(lens: &mut QueryLens<&Position>) -> BTreeSet<Position> {
+    let query: Query<'_, '_, &Position> = lens.query();
+    let iter = query.iter().cloned();
+    return BTreeSet::from_iter(iter);
+}
+
+fn positions_univ_set() -> BTreeSet<Position> {
+    return BTreeSet::from_iter(iproduct!(0..SIDE_LENGTH, 0..SIDE_LENGTH).map(Position::from));
+}
+
+fn get_positions_complement_set(lens: &mut QueryLens<&Position>) -> BTreeSet<Position> {
+    let query: Query<'_, '_, &Position> = lens.query();
+    let iter = query.iter().cloned();
+    let set: BTreeSet<Position> = BTreeSet::from_iter(iter);
+    return positions_univ_set().difference(&set).cloned().collect();
+}
+
+fn create_random_tile(
+    mut commands: Commands,
+    mut query: Query<&Position, With<Tile>>,
+    mut rng: ResMut<GlobalEntropy<WyRand>>,
+) {
+    let mut lens: QueryLens<&Position> = query.transmute_lens::<&Position>();
+    let candidates_of_positions: BTreeSet<Position> = get_positions_complement_set(&mut lens);
+    let rnd_n = rng.next_u64() as usize % candidates_of_positions.len();
+    let position = candidates_of_positions
+        .iter()
+        .nth(rnd_n)
+        .expect("candidates_of_positions: out of range!!")
+        .clone();
+    let tile = Tile(2);
+    create_tile(&mut commands, tile, position);
+}
+
 fn main() {
     let window = Window {
         title: "2048".to_string(),
@@ -209,6 +260,7 @@ fn main() {
             primary_window,
             ..default()
         }))
+        .add_plugins(EntropyPlugin::<WyRand>::default())
         .add_systems(Startup, setup)
         .init_state::<GameState>()
         .add_event::<MoveEvent>()
@@ -218,7 +270,9 @@ fn main() {
         )
         .add_systems(
             Update,
-            return_to_move_state.run_if(in_state(GameState::Spawn)),
+            (create_random_tile, return_to_move_state)
+                .chain()
+                .run_if(in_state(GameState::Spawn)),
         )
         .add_systems(Update, bevy::window::close_on_esc)
         .run();
