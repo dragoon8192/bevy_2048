@@ -1,4 +1,4 @@
-use bevy::ecs::query;
+use bevy::app::AppExit;
 use bevy::ecs::system::QueryLens;
 use bevy::prelude::*;
 
@@ -19,10 +19,15 @@ pub fn check_and_set_game_over_state(
     mut next_state: ResMut<NextState<GameState>>,
 ) {
     let mut lens: QueryLens<&Position> = query.transmute_lens();
-    if check_positions_are_full(&mut lens) {
+    if check_positions_are_full(lens) {
         // TODO Tile の合成可能性も確認
         next_state.set(GameState::GameOver);
     } else {
         next_state.set(GameState::Move);
     }
+}
+
+pub fn end_game(mut exit: EventWriter<AppExit>) {
+    println!("GAME OVER!!");
+    exit.send(AppExit);
 }
