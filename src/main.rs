@@ -2,23 +2,24 @@ use bevy::app::*;
 use bevy::prelude::*;
 use bevy_prng::WyRand;
 use bevy_rand::plugin::EntropyPlugin;
-use events::move_event::MoveEvent;
-use states::game_state::return_to_move_state;
-use states::game_state::GameState;
-use systems::tile::create_random_tile;
 
 mod components;
 mod constants;
 mod events;
 mod states;
 mod systems;
-use crate::components::position::Position;
-use crate::components::tile::Tile;
-use crate::constants::WINDOW_SIZE;
-use crate::events::move_event::emit_move_event_from_keyboard;
-use crate::systems::background_board::create_background_board;
-use crate::systems::tile::create_tile;
-use crate::systems::tile::handle_tile_movement;
+
+use components::position::Position;
+use components::tile::Tile;
+use constants::WINDOW_SIZE;
+use events::move_event::emit_move_event_from_keyboard;
+use events::move_event::MoveEvent;
+use states::game_state::check_and_set_game_over_state;
+use states::game_state::GameState;
+use systems::background_board::create_background_board;
+use systems::tile::create_random_tile;
+use systems::tile::create_tile;
+use systems::tile::handle_tile_movement;
 
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
@@ -53,7 +54,7 @@ fn main() {
         )
         .add_systems(
             Update,
-            (create_random_tile, return_to_move_state)
+            (create_random_tile, check_and_set_game_over_state)
                 .chain()
                 .run_if(in_state(GameState::Spawn)),
         )
