@@ -39,6 +39,7 @@ pub fn create_tile(commands: &mut Commands, tile: Tile, position: Position) {
             transform: position.into(),
             ..Default::default()
         });
+    dbg!(position);
 }
 
 // 空いた Position への Tile の追加
@@ -65,7 +66,6 @@ pub fn handle_tile_movement(
     mut query: Query<(&mut Transform, &mut Position), With<Tile>>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
-    let mut moved = false;
     for ev in move_evr.read() {
         // 移動方向と回転回数
         let (dx, dy, rot) = match ev {
@@ -100,10 +100,8 @@ pub fn handle_tile_movement(
             pos.y = (pos.y as isize + dy * mv) as usize;
             *trans = pos.clone().into();
         }
-        moved = true;
-    }
-    if moved {
         next_state.set(GameState::Spawn);
+        dbg!(next_state.0);
     }
 }
 
