@@ -1,6 +1,6 @@
 use bevy::ecs::system::{Query, QueryLens};
 use bevy::prelude::*;
-use bevy::text::Text;
+use bevy::text::{Text, Text2dBounds};
 use bevy_prng::WyRand;
 use bevy_rand::prelude::GlobalEntropy;
 use itertools::iproduct;
@@ -27,11 +27,17 @@ pub fn get_tiles_layout(lens: &mut QueryLens<&Position>) -> [[bool; SIDE_LENGTH]
 }
 
 // 任意の Position への Tile の追加
-pub fn create_tile(commands: &mut Commands, tile: Tile, position: Position) {
+pub fn create_tile(
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    tile: Tile,
+    position: Position,
+) {
+    let font = asset_server.load("fonts/Kenney Space.ttf");
     let text = Text::from_section(
         tile.0.to_string(),
         TextStyle {
-            font: default(),
+            font: font.clone(),
             font_size: TILE_FONT_SIZE,
             color: Color::GRAY,
         },
@@ -52,6 +58,12 @@ pub fn create_tile(commands: &mut Commands, tile: Tile, position: Position) {
         .insert(Text2dBundle {
             text,
             transform: position.to_transform(20.0),
+            text_2d_bounds: Text2dBounds {
+                size: Vec2 {
+                    x: TILE_FONT_SIZE,
+                    y: TILE_FONT_SIZE,
+                },
+            },
             ..default()
         });
     dbg!(position);
@@ -62,6 +74,7 @@ pub fn create_random_tile(
     mut commands: Commands,
     mut query: Query<&Position, With<Tile>>,
     mut rng: ResMut<GlobalEntropy<WyRand>>,
+    asset_server: Res<AssetServer>,
 ) {
     let lens: QueryLens<&Position> = query.transmute_lens::<&Position>();
     let candidates_of_positions: BTreeSet<Position> = get_positions_complement_set(lens);
@@ -72,7 +85,7 @@ pub fn create_random_tile(
         .expect("candidates_of_positions: out of range!!")
         .clone();
     let tile = Tile(2);
-    create_tile(&mut commands, tile, position);
+    create_tile(&mut commands, &asset_server, tile, position);
 }
 
 // MoveEvent に基づいて Tile を移動

@@ -22,12 +22,12 @@ use systems::tile::create_random_tile;
 use systems::tile::create_tile;
 use systems::tile::handle_tile_movement;
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
     create_background_board(&mut commands);
 
     for (i, j, num) in [(1, 0, 2), (3, 0, 4), (1, 3, 8)] {
-        create_tile(&mut commands, Tile(num), Position::new(i, j));
+        create_tile(&mut commands, &asset_server, Tile(num), Position::new(i, j));
     }
 }
 
