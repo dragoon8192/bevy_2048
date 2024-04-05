@@ -1,5 +1,6 @@
 use bevy::ecs::system::{Query, QueryLens};
 use bevy::prelude::*;
+use bevy::text::Text;
 use bevy_prng::WyRand;
 use bevy_rand::prelude::GlobalEntropy;
 use itertools::iproduct;
@@ -8,6 +9,7 @@ use std::collections::BTreeSet;
 
 use super::position::get_positions_complement_set;
 use crate::constants::SIDE_LENGTH;
+use crate::constants::TILE_FONT_SIZE;
 use crate::constants::TILE_SIZE_2D;
 use crate::events::move_event::MoveEvent;
 use crate::states::game_state::GameState;
@@ -26,6 +28,14 @@ pub fn get_tiles_layout(lens: &mut QueryLens<&Position>) -> [[bool; SIDE_LENGTH]
 
 // 任意の Position への Tile の追加
 pub fn create_tile(commands: &mut Commands, tile: Tile, position: Position) {
+    let text = Text::from_section(
+        tile.0.to_string(),
+        TextStyle {
+            font: default(),
+            font_size: TILE_FONT_SIZE,
+            color: Color::GRAY,
+        },
+    );
     commands
         .spawn_empty()
         .insert(tile)
@@ -34,10 +44,15 @@ pub fn create_tile(commands: &mut Commands, tile: Tile, position: Position) {
             sprite: Sprite {
                 color: Color::from(tile),
                 custom_size: TILE_SIZE_2D,
-                ..Default::default()
+                ..default()
             },
             transform: position.into(),
-            ..Default::default()
+            ..default()
+        })
+        .insert(Text2dBundle {
+            text,
+            transform: position.to_transform(20.0),
+            ..default()
         });
     dbg!(position);
 }
