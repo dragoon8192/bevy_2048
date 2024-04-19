@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use crate::constants::SIDE_LENGTH;
+use crate::constants::GRID_HEIGHT;
+use crate::constants::GRID_WIDTH;
 use crate::constants::TILE_SIZE;
 
 #[derive(Component, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Debug)]
@@ -14,9 +15,13 @@ impl Position {
         return Self { x, y };
     }
     pub fn to_transform(&self, z: f32) -> Transform {
-        let x = (-(SIDE_LENGTH as f32) / 2.0 + self.x as f32 + 0.5) * (TILE_SIZE * 1.05);
-        let y = (-(SIDE_LENGTH as f32) / 2.0 + self.y as f32 + 0.5) * (TILE_SIZE * 1.05);
+        let x = (-(GRID_WIDTH as f32) / 2.0 + self.x as f32 + 0.5) * (TILE_SIZE * 1.05);
+        let y = (-(GRID_HEIGHT as f32) / 2.0 + self.y as f32 + 0.5) * (TILE_SIZE * 1.05);
         return Transform::from_xyz(x, y, z);
+    }
+    pub fn shift(&self, (x, y): (isize, isize)) {
+        self.x = (self.x as isize + x) as usize;
+        self.y = (self.y as isize + y) as usize;
     }
 }
 
