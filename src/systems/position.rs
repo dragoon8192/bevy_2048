@@ -3,7 +3,8 @@ use itertools::iproduct;
 use std::collections::BTreeSet;
 
 use crate::components::position::Position;
-use crate::constants::SIDE_LENGTH;
+use crate::constants::GRID_HEIGHT;
+use crate::constants::GRID_WIDTH;
 
 fn get_positions_set(mut lens: QueryLens<&Position>) -> BTreeSet<Position> {
     let query: Query<'_, '_, &Position> = lens.query();
@@ -12,7 +13,7 @@ fn get_positions_set(mut lens: QueryLens<&Position>) -> BTreeSet<Position> {
 }
 
 fn generate_universal_position_set() -> BTreeSet<Position> {
-    return BTreeSet::from_iter(iproduct!(0..SIDE_LENGTH, 0..SIDE_LENGTH).map(Position::from));
+    return BTreeSet::from_iter(iproduct!(0..GRID_WIDTH, 0..GRID_HEIGHT).map(Position::from));
 }
 
 pub fn check_positions_are_full(lens: QueryLens<&Position>) -> bool {
