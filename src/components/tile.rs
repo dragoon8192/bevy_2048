@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-#[derive(Component, Clone, Copy)]
+#[derive(Component, Clone, Copy, PartialEq, Eq)]
 pub struct Tile(pub u64);
 
 impl From<Tile> for Color {
