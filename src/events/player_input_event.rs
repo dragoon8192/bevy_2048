@@ -1,24 +1,24 @@
 use bevy::prelude::*;
 
 #[derive(Event, PartialEq, Eq)]
-pub enum MoveEvent {
+pub enum PlayerInputEvent {
     Left,
     Right,
     Up,
     Down,
 }
 
-pub fn emit_move_event_from_keyboard(
+pub fn emit_player_input_event_from_keyboard(
     keyboard: Res<ButtonInput<KeyCode>>,
-    mut move_evw: EventWriter<MoveEvent>,
+    mut input_evw: EventWriter<PlayerInputEvent>,
 ) {
     if keyboard.just_pressed(KeyCode::ArrowLeft) {
-        move_evw.send(MoveEvent::Left);
+        input_evw.send(PlayerInputEvent::Left);
     } else if keyboard.just_pressed(KeyCode::ArrowRight) {
-        move_evw.send(MoveEvent::Right);
+        input_evw.send(PlayerInputEvent::Right);
     } else if keyboard.just_pressed(KeyCode::ArrowUp) {
-        move_evw.send(MoveEvent::Up);
+        input_evw.send(PlayerInputEvent::Up);
     } else if keyboard.just_pressed(KeyCode::ArrowDown) {
-        move_evw.send(MoveEvent::Down);
+        input_evw.send(PlayerInputEvent::Down);
     }
 }
