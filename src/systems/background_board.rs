@@ -1,6 +1,7 @@
 use crate::components::position::Position;
 use crate::constants::BOARD_SIZE_2D;
-use crate::constants::SIDE_LENGTH;
+use crate::constants::GRID_HEIGHT;
+use crate::constants::GRID_WIDTH;
 use crate::constants::TILE_SIZE_2D;
 use bevy::prelude::*;
 use itertools::iproduct;
@@ -19,7 +20,7 @@ pub fn create_background_board(commands: &mut Commands) {
             ..Default::default()
         })
         .insert(Background);
-    for (i, j) in iproduct!(0..SIDE_LENGTH, 0..SIDE_LENGTH) {
+    for (i, j) in iproduct!(0..GRID_WIDTH, 0..GRID_HEIGHT) {
         commands
             .spawn(SpriteBundle {
                 sprite: Sprite {
