@@ -9,6 +9,8 @@ use crate::systems::position::check_positions_are_full;
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum GameState {
     #[default]
+    Input,
+    Calculate,
     Move,
     Spawn,
     GameOver,
@@ -25,7 +27,7 @@ pub fn check_and_set_game_over_state(
         next_state.set(GameState::GameOver);
     } else {
         dbg!(next_state.0);
-        next_state.set(GameState::Move);
+        next_state.set(GameState::Input);
     }
 }
 
