@@ -8,7 +8,7 @@ pub enum PlayerInputEvent {
     Down,
 }
 
-pub fn emit_player_input_event_from_keyboard(
+pub fn input_from_keyboard(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut input_evw: EventWriter<PlayerInputEvent>,
 ) {
