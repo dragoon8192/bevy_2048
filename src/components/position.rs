@@ -19,7 +19,7 @@ impl Position {
         let y = (-(GRID_HEIGHT as f32) / 2.0 + self.y as f32 + 0.5) * (TILE_SIZE * 1.05);
         return Transform::from_xyz(x, y, z);
     }
-    pub fn shift(&self, (x, y): (isize, isize)) {
+    pub fn shift(&mut self, (x, y): (isize, isize)) {
         self.x = (self.x as isize + x) as usize;
         self.y = (self.y as isize + y) as usize;
     }
