@@ -38,13 +38,13 @@ impl<T> RotatedGridArray<T> {
     pub fn new(grid_array: GridArray<T>, turn: QuarterTurn) -> Self {
         Self { grid_array, turn }
     }
-    pub fn width(self) -> usize {
+    pub fn width(&self) -> usize {
         match self.turn {
             QuarterTurn::Deg000 | QuarterTurn::Deg180 => return GRID_WIDTH,
             QuarterTurn::Deg090 | QuarterTurn::Deg270 => return GRID_HEIGHT,
         }
     }
-    pub fn height(self) -> usize {
+    pub fn height(&self) -> usize {
         match self.turn {
             QuarterTurn::Deg000 | QuarterTurn::Deg180 => return GRID_HEIGHT,
             QuarterTurn::Deg090 | QuarterTurn::Deg270 => return GRID_WIDTH,
@@ -66,18 +66,6 @@ impl<T> RotatedGridArray<T> {
     }
 }
 
-impl<T> From<RotatedGridArray<T>> for Vec<Vec<&T>> {
-    fn from(val: RotatedGridArray<T>) -> Self {
-        let mut vec: Vec<Vec<&T>> = vec![];
-        for i in 0..val.width() {
-            for j in 0..val.height() {
-                vec[i][j] = val.get(i, j).unwrap();
-            }
-        }
-        return vec;
-    }
-}
-
 impl<T: Clone> From<RotatedGridArray<T>> for Vec<Vec<T>> {
     fn from(grid: RotatedGridArray<T>) -> Self {
         let mut vec: Vec<Vec<T>> = vec![];
@@ -90,13 +78,6 @@ impl<T: Clone> From<RotatedGridArray<T>> for Vec<Vec<T>> {
     }
 }
 
-impl<T> From<RotatedGridArray<T>> for VecDeque<VecDeque<&T>> {
-    fn from(val: RotatedGridArray<T>) -> Self {
-        let vec_vec: Vec<Vec<&T>> = val.into();
-        return vec_vec.into_iter().map(|vec| vec.into()).collect();
-    }
-}
-
 impl<T: Clone> From<RotatedGridArray<T>> for VecDeque<VecDeque<T>> {
     fn from(val: RotatedGridArray<T>) -> Self {
         let vec_vec: Vec<Vec<T>> = val.into();
@@ -104,7 +85,7 @@ impl<T: Clone> From<RotatedGridArray<T>> for VecDeque<VecDeque<T>> {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Clone, Copy)]
 enum QuarterTurn {
     #[default]
     Deg000,
@@ -114,7 +95,7 @@ enum QuarterTurn {
 }
 
 impl QuarterTurn {
-    fn downward_unit(self) -> (isize, isize) {
+    fn downward_unit(&self) -> (isize, isize) {
         match self {
             QuarterTurn::Deg000 => return (0, -1),
             QuarterTurn::Deg090 => return (-1, 0),
@@ -231,7 +212,7 @@ pub fn handle_player_input(
             ),
             turn,
         };
-        let mut vec: Vec<Vec<Option<Entity>>> = tiles_layout.into();
+        let vec: Vec<Vec<Option<Entity>>> = tiles_layout.into();
         // 動いた方向にスライスしてそれぞれについて SlicedMovementEvent を発行
         for down_axis in vec.into_iter() {
             sliced_move_evw.send(SlicedMovementEvent(down_axis, turn));
@@ -241,104 +222,95 @@ pub fn handle_player_input(
 }
 
 #[derive(Event)]
-struct SlicedMovementEvent(Vec<Option<Entity>>, QuarterTurn);
+pub struct SlicedMovementEvent(Vec<Option<Entity>>, QuarterTurn);
 
 #[derive(Event)]
-enum TileMovementEvent {
+pub enum TileMovementEvent {
     OneStep(Entity, QuarterTurn),
     Merge(Entity, Entity, QuarterTurn),
 }
 
-// 再帰用の struct
-struct Rec(Box<dyn Fn(&Rec, &mut VecDeque<Option<Entity>>) -> Result<(), QueryEntityError>>);
-impl Rec {
-    fn new(
-        f: impl Fn(&Rec, &mut VecDeque<Option<Entity>>) -> Result<(), QueryEntityError>,
-    ) -> Self {
-        return Self(Box::new(f));
-    }
-    fn rec(&self, val: &mut VecDeque<Option<Entity>>) -> Result<(), QueryEntityError> {
-        return (*self.0)(self, val);
+fn shift_tiles_one_step(
+    tile_entitys: Vec<Option<Entity>>,
+    turn: QuarterTurn,
+    tile_move_evw: &mut EventWriter<TileMovementEvent>,
+) {
+    tile_entitys
+        .into_iter()
+        .flatten()
+        .map(|e| tile_move_evw.send(TileMovementEvent::OneStep(e, turn)));
+}
+
+fn calc_tiles_slice(
+    tile_entitys: &mut VecDeque<Option<Entity>>,
+    turn: QuarterTurn,
+    tile_move_evw: &mut EventWriter<TileMovementEvent>,
+    query: &Query<&Tile>,
+) -> Result<(), QueryEntityError> {
+    match tile_entitys.pop_front() {
+        // tile_entitys is empty. i.e. tile_entitys = [].
+        None => {
+            return Ok(());
+        }
+        // 要素を持つが、最初が空白だった場合. i.e. tile_entitys = None: _.
+        Some(None) => {
+            shift_tiles_one_step((*tile_entitys).clone().into(), turn, tile_move_evw);
+            return calc_tiles_slice(tile_entitys, turn, tile_move_evw, &query);
+        }
+        // 最初の要素が Tile だった場合. i.e. tile_entitys = Some(e0): _.
+        Some(Some(e0)) => {
+            match tile_entitys.pop_front() {
+                // 1つしか要素を持たなかった場合. i.e. tile_entitys = Some(e0): [].
+                None => {
+                    return Ok(());
+                }
+                // tile_entitys = Some(e0): None: _.
+                Some(None) => {
+                    shift_tiles_one_step((*tile_entitys).clone().into(), turn, tile_move_evw);
+                    return calc_tiles_slice(tile_entitys, turn, tile_move_evw, &query);
+                }
+                // tile_entitys = Some(e0): Some(e1): _.
+                Some(Some(e1)) => {
+                    let tile0 = query.get(e0)?;
+                    let tile1 = query.get(e1)?;
+                    if tile0 == tile1 {
+                        tile_move_evw.send(TileMovementEvent::Merge(e0, e1, turn));
+                        shift_tiles_one_step((*tile_entitys).clone().into(), turn, tile_move_evw);
+                        return calc_tiles_slice(tile_entitys, turn, tile_move_evw, &query);
+                    } else {
+                        return calc_tiles_slice(tile_entitys, turn, tile_move_evw, &query);
+                    }
+                }
+            }
+        }
     }
 }
 
 pub fn calc_sliced_movement(
     mut sliced_move_evr: EventReader<SlicedMovementEvent>,
     mut tile_move_evw: EventWriter<TileMovementEvent>,
-    mut query: Query<&Tile>,
+    query: Query<&Tile>,
 ) -> Result<(), QueryEntityError> {
-    for &SlicedMovementEvent(tile_entitys, turn) in sliced_move_evr.read() {
-        let unit: (isize, isize) = turn.downward_unit();
-        let mut tile_entitys: VecDeque<Option<Entity>> = tile_entitys.into();
+    for SlicedMovementEvent(tile_entitys, turn) in sliced_move_evr.read() {
+        let mut tile_entitys: VecDeque<Option<Entity>> = (*tile_entitys).clone().into();
 
-        let shift_tiles_one_step = |tile_entitys: Vec<Option<Entity>>| {
-            tile_entitys
-                .into_iter()
-                .flatten()
-                .map(|e| tile_move_evw.send(TileMovementEvent::OneStep(e, turn)));
-        };
-
-        let calc_tiles_slice: Rec = Rec(Box::new(
-            |&calc_tiles_slice: &Rec,
-             tile_entitys: &mut VecDeque<Option<Entity>>|
-             -> Result<(), QueryEntityError> {
-                match tile_entitys.pop_front() {
-                    // tile_entitys is empty. i.e. tile_entitys = [].
-                    None => {
-                        return Ok(());
-                    }
-                    // 要素を持つが、最初が空白だった場合. i.e. tile_entitys = None: _.
-                    Some(None) => {
-                        shift_tiles_one_step((*tile_entitys).into());
-                        return calc_tiles_slice.rec(tile_entitys);
-                    }
-                    // 最初の要素が Tile だった場合. i.e. tile_entitys = Some(e0): _.
-                    Some(Some(e0)) => {
-                        match tile_entitys.pop_front() {
-                            // 1つしか要素を持たなかった場合. i.e. tile_entitys = Some(e0): [].
-                            None => {
-                                return Ok(());
-                            }
-                            // tile_entitys = Some(e0): None: _.
-                            Some(None) => {
-                                shift_tiles_one_step((*tile_entitys).into());
-                                return calc_tiles_slice.rec(tile_entitys);
-                            }
-                            // tile_entitys = Some(e0): Some(e1): _.
-                            Some(Some(e1)) => {
-                                let tile0 = query.get(e0)?;
-                                let tile1 = query.get(e1)?;
-                                if tile0 == tile1 {
-                                    tile_move_evw.send(TileMovementEvent::Merge(e0, e1, turn));
-                                    shift_tiles_one_step((*tile_entitys).into());
-                                    return calc_tiles_slice.rec(tile_entitys);
-                                } else {
-                                    return calc_tiles_slice.rec(tile_entitys);
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-        ));
-        calc_tiles_slice.rec(&mut tile_entitys)?;
+        calc_tiles_slice(&mut tile_entitys, *turn, &mut tile_move_evw, &query);
     }
     return Ok(());
 }
-
 pub fn move_tiles(
     mut tile_move_evr: EventReader<TileMovementEvent>,
-    commands: &mut Commands,
-    query: Query<(&Position, &Tile)>,
+    mut query: Query<(&Position, &mut Tile)>,
+    mut commands: Commands,
 ) -> Result<(), QueryEntityError> {
-    for &ev in tile_move_evr.read() {
+    for ev in tile_move_evr.read() {
         match ev {
-            TileMovementEvent::OneStep(e, turn) => {
+            &TileMovementEvent::OneStep(e, turn) => {
                 let (pos, _) = query.get(e)?;
                 pos.shift(turn.downward_unit());
             }
-            TileMovementEvent::Merge(e0, e1, turn) => {
-                let (_, tile0) = query.get(e0)?;
+            &TileMovementEvent::Merge(e0, e1, _) => {
+                let (_, mut tile0) = query.get_mut(e0)?;
                 tile0.double();
                 commands.entity(e1).despawn();
             }
