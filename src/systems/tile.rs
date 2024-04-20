@@ -7,6 +7,7 @@ use bevy_rand::prelude::GlobalEntropy;
 use rand_core::RngCore;
 use std::collections::BTreeSet;
 use std::collections::VecDeque;
+use std::fmt::Debug;
 use std::result::Result;
 
 use super::position::get_positions_complement_set;
@@ -29,9 +30,24 @@ impl<T: Copy> GridArray<T> {
     }
 }
 
+impl<T: Debug> Debug for GridArray<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_tuple("GridArray").field(&self.0).finish()
+    }
+}
+
 pub struct RotatedGridArray<T> {
     grid_array: GridArray<T>,
     turn: QuarterTurn,
+}
+
+impl<T: Debug> Debug for RotatedGridArray<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("RotatedGridArray")
+            .field("grid_array", &self.grid_array)
+            .field("turn", &self.turn)
+            .finish()
+    }
 }
 
 impl<T> RotatedGridArray<T> {
@@ -85,7 +101,7 @@ impl<T: Clone> From<RotatedGridArray<T>> for VecDeque<VecDeque<T>> {
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, Debug)]
 pub enum QuarterTurn {
     #[default]
     Deg000,
@@ -165,7 +181,7 @@ pub fn create_tile(
             },
             ..default()
         });
-    dbg!(position);
+    // dbg!(position);
 }
 
 // 空いた Position への Tile の追加
@@ -212,6 +228,7 @@ pub fn handle_player_input(
             ),
             turn,
         };
+        dbg!(&tiles_layout);
         let vec: Vec<Vec<Option<Entity>>> = tiles_layout.into();
         // 動いた方向にスライスしてそれぞれについて SlicedMovementEvent を発行
         for down_axis in vec.into_iter() {
