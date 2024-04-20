@@ -1,7 +1,13 @@
 use bevy::prelude::*;
 
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
-pub struct Tile(pub u64);
+pub struct Tile(u64);
+
+impl Tile {
+    fn double() {
+        self.0 *= 2;
+    }
+}
 
 impl From<Tile> for Color {
     fn from(Tile(num): Tile) -> Self {
