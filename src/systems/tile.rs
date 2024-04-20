@@ -88,7 +88,8 @@ impl<T: Clone + Debug> From<RotatedGridArray<T>> for Vec<Vec<T>> {
         for i in 0..grid.width() {
             let mut y_axis: Vec<T> = Vec::new();
             for j in 0..grid.height() {
-                let val = grid.get(i, j).unwrap().clone();
+                let op = grid.get(i, j);
+                let val = op.unwrap().clone();
                 y_axis.push(val);
             }
             vec.push(y_axis);
@@ -320,6 +321,7 @@ pub fn calc_sliced_movement(
         calc_tiles_slice(&mut tile_entitys, *turn, &mut tile_move_evw, &query)?;
     }
     next_state.set(GameState::Move);
+    dbg!(GameState::Move);
     return Ok(());
 }
 
