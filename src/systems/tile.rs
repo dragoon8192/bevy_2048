@@ -194,6 +194,7 @@ pub fn create_random_tile(
     mut rng: ResMut<GlobalEntropy<WyRand>>,
     asset_server: Res<AssetServer>,
 ) {
+    dbg!("System: create_random_tile");
     let lens: QueryLens<&Position> = query.transmute_lens::<&Position>();
     let candidates_of_positions: BTreeSet<Position> = get_positions_complement_set(lens);
     let rnd_n = rng.next_u64() as usize % candidates_of_positions.len();
@@ -211,8 +212,8 @@ pub fn handle_player_input(
     mut input_evr: EventReader<PlayerInputEvent>,
     mut sliced_move_evw: EventWriter<SlicedMovementEvent>,
     mut query: Query<(Entity, &mut Transform, &mut Position), With<Tile>>,
-    mut next_state: ResMut<NextState<GameState>>,
 ) {
+    dbg!("System: handle_player_input");
     for ev in input_evr.read() {
         // 移動方向と回転回数
         // tiles_layout[x][y] にアクセスするので、行列の並び方と 90deg ずれることに注意
@@ -231,13 +232,12 @@ pub fn handle_player_input(
             ),
             turn,
         };
-        dbg!(&tiles_layout);
+        // dbg!(&tiles_layout);
         let vec: Vec<Vec<Option<Entity>>> = tiles_layout.into();
         // 動いた方向にスライスしてそれぞれについて SlicedMovementEvent を発行
         for down_axis in vec.into_iter() {
             sliced_move_evw.send(SlicedMovementEvent(down_axis, turn));
         }
-        next_state.set(GameState::Spawn);
     }
 }
 
@@ -311,19 +311,25 @@ pub fn calc_sliced_movement(
     mut sliced_move_evr: EventReader<SlicedMovementEvent>,
     mut tile_move_evw: EventWriter<TileMovementEvent>,
     query: Query<&Tile>,
+    mut next_state: ResMut<NextState<GameState>>,
 ) -> Result<(), QueryEntityError> {
+    dbg!("System: calc_sliced_movement");
     for SlicedMovementEvent(tile_entitys, turn) in sliced_move_evr.read() {
         let mut tile_entitys: VecDeque<Option<Entity>> = (*tile_entitys).clone().into();
 
         calc_tiles_slice(&mut tile_entitys, *turn, &mut tile_move_evw, &query)?;
     }
+    next_state.set(GameState::Move);
     return Ok(());
 }
+
 pub fn move_tiles(
     mut tile_move_evr: EventReader<TileMovementEvent>,
     mut query: Query<(&mut Position, &mut Tile)>,
     mut commands: Commands,
+    mut next_state: ResMut<NextState<GameState>>,
 ) -> Result<(), QueryEntityError> {
+    dbg!("System: move_tiles");
     for ev in tile_move_evr.read() {
         match ev {
             &TileMovementEvent::OneStep(e, turn) => {
@@ -337,5 +343,6 @@ pub fn move_tiles(
             }
         }
     }
+    next_state.set(GameState::Spawn);
     return Ok(());
 }
