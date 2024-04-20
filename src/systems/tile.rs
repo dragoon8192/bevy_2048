@@ -84,12 +84,14 @@ impl<T> RotatedGridArray<T> {
 
 impl<T: Clone + Debug> From<RotatedGridArray<T>> for Vec<Vec<T>> {
     fn from(grid: RotatedGridArray<T>) -> Self {
-        let mut vec: Vec<Vec<T>> = vec![];
+        let mut vec: Vec<Vec<T>> = Vec::new();
         for i in 0..grid.width() {
+            let mut y_axis: Vec<T> = Vec::new();
             for j in 0..grid.height() {
-                vec[i][j] = grid.get(i, j).unwrap().clone();
-                dbg!(&vec[i][j]);
+                let val = grid.get(i, j).unwrap().clone();
+                y_axis.push(val);
             }
+            vec.push(y_axis);
         }
         return vec;
     }
