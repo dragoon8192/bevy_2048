@@ -4,7 +4,7 @@ use bevy::prelude::*;
 pub struct Tile(u64);
 
 impl Tile {
-    fn double() {
+    pub fn double(&mut self) {
         self.0 *= 2;
     }
 }
@@ -18,5 +18,11 @@ impl From<Tile> for Color {
             _ => Color::RED,
             // TODO
         }
+    }
+}
+
+impl ToString for Tile {
+    fn to_string(&self) -> String {
+        return self.0.to_string();
     }
 }
