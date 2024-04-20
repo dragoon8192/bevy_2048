@@ -82,19 +82,20 @@ impl<T> RotatedGridArray<T> {
     }
 }
 
-impl<T: Clone> From<RotatedGridArray<T>> for Vec<Vec<T>> {
+impl<T: Clone + Debug> From<RotatedGridArray<T>> for Vec<Vec<T>> {
     fn from(grid: RotatedGridArray<T>) -> Self {
         let mut vec: Vec<Vec<T>> = vec![];
         for i in 0..grid.width() {
             for j in 0..grid.height() {
                 vec[i][j] = grid.get(i, j).unwrap().clone();
+                dbg!(&vec[i][j]);
             }
         }
         return vec;
     }
 }
 
-impl<T: Clone> From<RotatedGridArray<T>> for VecDeque<VecDeque<T>> {
+impl<T: Clone + Debug> From<RotatedGridArray<T>> for VecDeque<VecDeque<T>> {
     fn from(val: RotatedGridArray<T>) -> Self {
         let vec_vec: Vec<Vec<T>> = val.into();
         return vec_vec.into_iter().map(|vec| vec.into()).collect();
