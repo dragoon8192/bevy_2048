@@ -21,7 +21,7 @@ pub use crate::components::position::Position;
 pub use crate::components::tile::Tile;
 
 // grid : GridArray<T> は [0][0] から [GRID_WIDTH - 1][GRID_HEIGHT - 1] までの成分を持つ
-struct GridArray<T>([[T; GRID_HEIGHT]; GRID_WIDTH]);
+pub struct GridArray<T>([[T; GRID_HEIGHT]; GRID_WIDTH]);
 
 impl<T: Copy> GridArray<T> {
     pub fn new(a: T) -> Self {
@@ -29,7 +29,7 @@ impl<T: Copy> GridArray<T> {
     }
 }
 
-struct RotatedGridArray<T> {
+pub struct RotatedGridArray<T> {
     grid_array: GridArray<T>,
     turn: QuarterTurn,
 }
@@ -86,7 +86,7 @@ impl<T: Clone> From<RotatedGridArray<T>> for VecDeque<VecDeque<T>> {
 }
 
 #[derive(Default, Clone, Copy)]
-enum QuarterTurn {
+pub enum QuarterTurn {
     #[default]
     Deg000,
     Deg090,
@@ -235,10 +235,11 @@ fn shift_tiles_one_step(
     turn: QuarterTurn,
     tile_move_evw: &mut EventWriter<TileMovementEvent>,
 ) {
-    tile_entitys
-        .into_iter()
-        .flatten()
-        .map(|e| tile_move_evw.send(TileMovementEvent::OneStep(e, turn)));
+    for option in tile_entitys {
+        if let Some(e) = option {
+            tile_move_evw.send(TileMovementEvent::OneStep(e, turn));
+        }
+    }
 }
 
 fn calc_tiles_slice(
@@ -294,19 +295,19 @@ pub fn calc_sliced_movement(
     for SlicedMovementEvent(tile_entitys, turn) in sliced_move_evr.read() {
         let mut tile_entitys: VecDeque<Option<Entity>> = (*tile_entitys).clone().into();
 
-        calc_tiles_slice(&mut tile_entitys, *turn, &mut tile_move_evw, &query);
+        calc_tiles_slice(&mut tile_entitys, *turn, &mut tile_move_evw, &query)?;
     }
     return Ok(());
 }
 pub fn move_tiles(
     mut tile_move_evr: EventReader<TileMovementEvent>,
-    mut query: Query<(&Position, &mut Tile)>,
+    mut query: Query<(&mut Position, &mut Tile)>,
     mut commands: Commands,
 ) -> Result<(), QueryEntityError> {
     for ev in tile_move_evr.read() {
         match ev {
             &TileMovementEvent::OneStep(e, turn) => {
-                let (pos, _) = query.get(e)?;
+                let (mut pos, _) = query.get_mut(e)?;
                 pos.shift(turn.downward_unit());
             }
             &TileMovementEvent::Merge(e0, e1, _) => {
