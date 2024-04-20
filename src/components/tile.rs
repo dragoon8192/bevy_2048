@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
-pub struct Tile(u64);
+pub struct Tile(pub u64);
 
 impl Tile {
     pub fn double(&mut self) {
