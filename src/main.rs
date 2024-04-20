@@ -5,6 +5,7 @@ use bevy_rand::plugin::EntropyPlugin;
 
 mod components;
 mod constants;
+mod error;
 mod events;
 mod states;
 mod systems;
@@ -12,15 +13,17 @@ mod systems;
 use components::position::Position;
 use components::tile::Tile;
 use constants::WINDOW_SIZE;
-use events::move_event::emit_move_event_from_keyboard;
-use events::move_event::MoveEvent;
+use error::handle_query_entity_errors;
+use events::player_input_event::input_from_keyboard;
+use events::player_input_event::PlayerInputEvent;
 use states::game_state::check_and_set_game_over_state;
 use states::game_state::end_game;
 use states::game_state::GameState;
 use systems::background_board::create_background_board;
 use systems::tile::create_random_tile;
 use systems::tile::create_tile;
-use systems::tile::handle_tile_movement;
+use systems::tile::{calc_sliced_movement, handle_player_input, move_tiles};
+use systems::tile::{SlicedMovementEvent, TileMovementEvent};
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
@@ -48,10 +51,27 @@ fn main() {
         .add_plugins(EntropyPlugin::<WyRand>::default())
         .add_systems(Startup, setup)
         .init_state::<GameState>()
-        .add_event::<MoveEvent>()
+        .add_event::<PlayerInputEvent>()
+        .add_event::<SlicedMovementEvent>()
+        .add_event::<TileMovementEvent>()
         .add_systems(
             Update,
-            (handle_tile_movement, emit_move_event_from_keyboard).run_if(in_state(GameState::Move)),
+            input_from_keyboard.run_if(in_state(GameState::Input)),
+        )
+        .add_systems(
+            Update,
+            (
+                handle_player_input,
+                calc_sliced_movement.pipe(handle_query_entity_errors),
+            )
+                .chain()
+                .run_if(in_state(GameState::Calculate)),
+        )
+        .add_systems(
+            Update,
+            move_tiles
+                .pipe(handle_query_entity_errors)
+                .run_if(in_state(GameState::Move)),
         )
         .add_systems(
             Update,
