@@ -4,7 +4,7 @@ use super::calculate::CalculatePlugin;
 use super::input::InputPlugin;
 use super::movement::MovementPlugin;
 
-struct GamePluginGroup;
+pub struct GamePluginGroup;
 
 impl PluginGroup for GamePluginGroup {
     fn build(self) -> PluginGroupBuilder {
