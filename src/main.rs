@@ -22,7 +22,7 @@ use states::game_state::GameState;
 use systems::background_board::create_background_board;
 use systems::tile::create_random_tile;
 use systems::tile::create_tile;
-use systems::tile::update_tile;
+use systems::tile::update_tiles;
 use systems::tile::{calc_sliced_movement, handle_player_input, move_tiles};
 use systems::tile::{SlicedMovementEvent, TileMovementEvent};
 
@@ -69,7 +69,7 @@ fn main() {
         )
         .add_systems(
             OnEnter(GameState::Move),
-            (move_tiles.pipe(handle_query_entity_errors), update_tile).chain(),
+            (move_tiles.pipe(handle_query_entity_errors), update_tiles).chain(),
         )
         .add_systems(
             OnEnter(GameState::Spawn),
