@@ -2,6 +2,17 @@ use bevy::prelude::*;
 
 use crate::states::game_state::GameState;
 
+pub struct InputPlugin;
+
+impl Plugin for InputPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_event::<PlayerInputEvent>().add_systems(
+            Update,
+            input_from_keyboard.run_if(in_state(GameState::Input)),
+        );
+    }
+}
+
 #[derive(Event, PartialEq, Eq)]
 pub enum PlayerInputEvent {
     Left,
