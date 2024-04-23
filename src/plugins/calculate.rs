@@ -25,7 +25,7 @@ impl Plugin for CalculatePlugin {
                     calc_sliced_movement.pipe(handle_query_entity_errors),
                 )
                     .chain(),
-            )
+            );
     }
 }
 
@@ -154,7 +154,7 @@ pub fn calc_sliced_movement(
 
         calc_tiles_slice(&mut tile_entitys, *turn, &mut tile_move_evw, &query)?;
     }
-    next_state.set(GameState::Move);
-    dbg!(GameState::Move);
+    next_state.set(GameState::Movement);
+    dbg!(GameState::Movement);
     return Ok(());
 }

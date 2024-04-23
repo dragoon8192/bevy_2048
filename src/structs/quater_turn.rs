@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-#[derive(Default, Clone, Copy, Debug)]
+#[derive(Default, Clone, Copy, Debug, Eq, PartialEq)]
 pub enum QuarterTurn {
     #[default]
     Deg000,

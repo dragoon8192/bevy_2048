@@ -13,7 +13,7 @@ impl Plugin for MovementPlugin {
         app.add_systems(
             OnEnter(GameState::Movement),
             (move_tiles.pipe(handle_query_entity_errors), update_tiles).chain(),
-        )
+        );
     }
 }
 
