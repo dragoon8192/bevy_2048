@@ -1,5 +1,5 @@
-use bevy::ecs::query::QueryEntityError;
-use bevy::ecs::system::{Query, QueryLens};
+use bevy::ecs::query::{Or, QueryEntityError};
+use bevy::ecs::system::QueryLens;
 use bevy::prelude::*;
 use bevy::text::{Text, Text2dBounds};
 use bevy_prng::WyRand;
@@ -77,7 +77,7 @@ impl<T> RotatedGridArray<T> {
             QuarterTurn::Deg000 => return get2(i, j),
             QuarterTurn::Deg090 => return get2(j, GRID_HEIGHT - 1 - i),
             QuarterTurn::Deg180 => return get2(GRID_WIDTH - 1 - i, GRID_HEIGHT - 1 - j),
-            QuarterTurn::Deg270 => return get2(GRID_WIDTH - j, i),
+            QuarterTurn::Deg270 => return get2(GRID_WIDTH - 1 - j, i),
         }
     }
 }
@@ -145,6 +145,19 @@ pub fn get_tiles_layout_with_entity(
     return tiles_layout;
 }
 
+pub fn update_tile(
+    mut query: Query<
+        (&Tile, &Position, &mut Transform, &mut Text, &mut Sprite),
+        Or<(Changed<Tile>, Changed<Position>)>,
+    >,
+) {
+    for (tile, pos, mut trans, mut text, mut sprite) in query.iter_mut() {
+        *trans = pos.clone().into();
+        text.sections[0].value = tile.to_string();
+        sprite.color = tile.clone().into();
+    }
+}
+
 // 任意の Position への Tile の追加
 pub fn create_tile(
     commands: &mut Commands,
@@ -185,7 +198,6 @@ pub fn create_tile(
             },
             ..default()
         });
-    // dbg!(position);
 }
 
 // 空いた Position への Tile の追加
@@ -233,7 +245,7 @@ pub fn handle_player_input(
             ),
             turn,
         };
-        // dbg!(&tiles_layout);
+        dbg!(&tiles_layout);
         let vec: Vec<Vec<Option<Entity>>> = tiles_layout.into();
         // 動いた方向にスライスしてそれぞれについて SlicedMovementEvent を発行
         for down_axis in vec.into_iter() {
@@ -289,6 +301,7 @@ fn calc_tiles_slice(
                 // tile_entitys = Some(e0): None: _.
                 Some(None) => {
                     shift_tiles_one_step((*tile_entitys).clone().into(), turn, tile_move_evw);
+                    tile_entitys.push_front(Some(e0));
                     return calc_tiles_slice(tile_entitys, turn, tile_move_evw, &query);
                 }
                 // tile_entitys = Some(e0): Some(e1): _.
@@ -300,6 +313,7 @@ fn calc_tiles_slice(
                         shift_tiles_one_step((*tile_entitys).clone().into(), turn, tile_move_evw);
                         return calc_tiles_slice(tile_entitys, turn, tile_move_evw, &query);
                     } else {
+                        tile_entitys.push_front(Some(e1));
                         return calc_tiles_slice(tile_entitys, turn, tile_move_evw, &query);
                     }
                 }
@@ -327,7 +341,7 @@ pub fn calc_sliced_movement(
 
 pub fn move_tiles(
     mut tile_move_evr: EventReader<TileMovementEvent>,
-    mut query: Query<(&mut Position, &mut Tile)>,
+    mut query: Query<(&mut Position, &mut Transform, &mut Tile, &mut Text)>,
     mut commands: Commands,
     mut next_state: ResMut<NextState<GameState>>,
 ) -> Result<(), QueryEntityError> {
@@ -335,16 +349,19 @@ pub fn move_tiles(
     for ev in tile_move_evr.read() {
         match ev {
             &TileMovementEvent::OneStep(e, turn) => {
-                let (mut pos, _) = query.get_mut(e)?;
+                let (mut pos, mut trans, _, _) = query.get_mut(e)?;
                 pos.shift(turn.downward_unit());
+                *trans = pos.clone().into();
             }
             &TileMovementEvent::Merge(e0, e1, _) => {
-                let (_, mut tile0) = query.get_mut(e0)?;
+                let (_, _, mut tile0, mut text) = query.get_mut(e0)?;
                 tile0.double();
+                text.sections[0].value = tile0.to_string();
                 commands.entity(e1).despawn();
             }
         }
     }
     next_state.set(GameState::Spawn);
+    dbg!(GameState::Spawn);
     return Ok(());
 }
