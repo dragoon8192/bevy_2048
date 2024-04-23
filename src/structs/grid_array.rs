@@ -5,7 +5,7 @@ use super::quater_turn::QuarterTurn;
 use crate::constants::{GRID_HEIGHT, GRID_WIDTH};
 
 // grid : GridArray<T> は [0][0] から [GRID_WIDTH - 1][GRID_HEIGHT - 1] までの成分を持つ
-pub struct GridArray<T>([[T; GRID_HEIGHT]; GRID_WIDTH]);
+pub struct GridArray<T>(pub [[T; GRID_HEIGHT]; GRID_WIDTH]);
 
 impl<T: Copy> GridArray<T> {
     pub fn new(a: T) -> Self {
@@ -20,8 +20,8 @@ impl<T: Debug> Debug for GridArray<T> {
 }
 
 pub struct RotatedGridArray<T> {
-    grid_array: GridArray<T>,
-    turn: QuarterTurn,
+    pub grid_array: GridArray<T>,
+    pub turn: QuarterTurn,
 }
 
 impl<T: Debug> Debug for RotatedGridArray<T> {
