@@ -4,12 +4,11 @@ use bevy::prelude::*;
 use std::collections::VecDeque;
 use std::result::Result;
 
-use crate::states::game_state::GameState;
-use crate::states::input::PlayerInputEvent;
-
 use crate::components::position::Position;
 use crate::components::tile::Tile;
 use crate::error::handle_query_entity_errors;
+use crate::plugins::input::PlayerInputEvent;
+use crate::states::game_state::GameState;
 use crate::structs::grid_array::{GridArray, RotatedGridArray};
 use crate::structs::quater_turn::QuarterTurn;
 
@@ -30,10 +29,10 @@ impl Plugin for CalculatePlugin {
     }
 }
 
-#[derive(Event)]
+#[derive(Event, Eq, PartialEq)]
 pub struct SlicedMovementEvent(Vec<Option<Entity>>, QuarterTurn);
 
-#[derive(Event)]
+#[derive(Event, Eq, PartialEq)]
 pub enum TileMovementEvent {
     OneStep(Entity, QuarterTurn),
     Merge(Entity, Entity, QuarterTurn),
