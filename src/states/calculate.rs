@@ -9,8 +9,26 @@ use crate::states::input::PlayerInputEvent;
 
 use crate::components::position::Position;
 use crate::components::tile::Tile;
+use crate::error::handle_query_entity_errors;
 use crate::structs::grid_array::{GridArray, RotatedGridArray};
 use crate::structs::quater_turn::QuarterTurn;
+
+pub struct CalculatePlugin;
+
+impl Plugin for CalculatePlugin {
+    fn build(&self, app: &mut App) {
+        app.add_event::<SlicedMovementEvent>()
+            .add_event::<TileMovementEvent>()
+            .add_systems(
+                OnEnter(GameState::Calculate),
+                (
+                    handle_player_input,
+                    calc_sliced_movement.pipe(handle_query_entity_errors),
+                )
+                    .chain(),
+            )
+    }
+}
 
 #[derive(Event)]
 pub struct SlicedMovementEvent(Vec<Option<Entity>>, QuarterTurn);
