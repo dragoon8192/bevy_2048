@@ -22,6 +22,7 @@ use states::game_state::GameState;
 use systems::background_board::create_background_board;
 use systems::tile::create_random_tile;
 use systems::tile::create_tile;
+use systems::tile::update_tile;
 use systems::tile::{calc_sliced_movement, handle_player_input, move_tiles};
 use systems::tile::{SlicedMovementEvent, TileMovementEvent};
 
@@ -59,25 +60,20 @@ fn main() {
             input_from_keyboard.run_if(in_state(GameState::Input)),
         )
         .add_systems(
-            Update,
+            OnEnter(GameState::Calculate),
             (
                 handle_player_input,
                 calc_sliced_movement.pipe(handle_query_entity_errors),
             )
-                .chain()
-                .run_if(in_state(GameState::Calculate)),
+                .chain(),
         )
         .add_systems(
-            Update,
-            move_tiles
-                .pipe(handle_query_entity_errors)
-                .run_if(in_state(GameState::Move)),
+            OnEnter(GameState::Move),
+            (move_tiles.pipe(handle_query_entity_errors), update_tile).chain(),
         )
         .add_systems(
-            Update,
-            (create_random_tile, check_and_set_game_over_state)
-                .chain()
-                .run_if(in_state(GameState::Spawn)),
+            OnEnter(GameState::Spawn),
+            (create_random_tile, check_and_set_game_over_state).chain(),
         )
         .add_systems(OnEnter(GameState::GameOver), end_game)
         .add_systems(Update, bevy::window::close_on_esc)
