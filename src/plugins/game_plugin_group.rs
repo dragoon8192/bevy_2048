@@ -2,6 +2,7 @@ use bevy::app::{PluginGroup, PluginGroupBuilder};
 
 use super::calculate::CalculatePlugin;
 use super::input::InputPlugin;
+use super::movement::MovementPlugin;
 
 struct GamePluginGroup;
 
@@ -10,5 +11,6 @@ impl PluginGroup for GamePluginGroup {
         PluginGroupBuilder::start::<Self>()
             .add(InputPlugin)
             .add(CalculatePlugin)
+            .add(MovementPlugin)
     }
 }
