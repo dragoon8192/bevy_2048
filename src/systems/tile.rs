@@ -145,7 +145,7 @@ pub fn get_tiles_layout_with_entity(
     return tiles_layout;
 }
 
-pub fn update_tile(
+pub fn update_tiles(
     mut query: Query<
         (&Tile, &Position, &mut Transform, &mut Text, &mut Sprite),
         Or<(Changed<Tile>, Changed<Position>)>,
