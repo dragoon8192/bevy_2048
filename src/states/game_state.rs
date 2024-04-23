@@ -22,11 +22,8 @@ pub fn check_and_set_game_over_state(
 ) {
     let lens: QueryLens<&Position> = query.transmute_lens();
     if check_positions_are_full(lens) {
-        // TODO Tile の合成可能性も確認
-        dbg!(next_state.0);
         next_state.set(GameState::GameOver);
     } else {
-        dbg!(next_state.0);
         next_state.set(GameState::Input);
     }
 }
