@@ -29,6 +29,7 @@ pub fn create_random_tile(
     mut rng: ResMut<GlobalEntropy<WyRand>>,
     asset_server: Res<AssetServer>,
 ) {
+    dbg!("System: create_random_tile");
     let lens: QueryLens<&Position> = query.transmute_lens::<&Position>();
     let candidates_of_positions: BTreeSet<Position> = get_positions_complement_set(lens);
     let rnd_n = rng.next_u64() as usize % candidates_of_positions.len();
@@ -47,8 +48,10 @@ pub fn check_and_set_game_over_state(
 ) {
     let lens: QueryLens<&Position> = query.transmute_lens();
     if check_positions_are_full(lens) {
+        dbg!(GameState::GameOver);
         next_state.set(GameState::GameOver);
     } else {
+        dbg!(GameState::Input);
         next_state.set(GameState::Input);
     }
 }

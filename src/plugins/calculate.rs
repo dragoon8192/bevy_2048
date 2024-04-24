@@ -23,6 +23,7 @@ impl Plugin for CalculatePlugin {
                 (
                     handle_player_input,
                     calc_sliced_movement.pipe(handle_query_entity_errors),
+                    GameState::Movement.set_next(),
                 )
                     .chain(),
             );
@@ -74,7 +75,6 @@ pub fn handle_player_input(
             ),
             turn,
         };
-        dbg!(&tiles_layout);
         let vec: Vec<Vec<Option<Entity>>> = tiles_layout.into();
         // 動いた方向にスライスしてそれぞれについて SlicedMovementEvent を発行
         for down_axis in vec.into_iter() {
@@ -146,7 +146,6 @@ pub fn calc_sliced_movement(
     mut sliced_move_evr: EventReader<SlicedMovementEvent>,
     mut tile_move_evw: EventWriter<TileMovementEvent>,
     query: Query<&Tile>,
-    mut next_state: ResMut<NextState<GameState>>,
 ) -> Result<(), QueryEntityError> {
     dbg!("System: calc_sliced_movement");
     for SlicedMovementEvent(tile_entitys, turn) in sliced_move_evr.read() {
@@ -154,7 +153,5 @@ pub fn calc_sliced_movement(
 
         calc_tiles_slice(&mut tile_entitys, *turn, &mut tile_move_evw, &query)?;
     }
-    next_state.set(GameState::Movement);
-    dbg!(GameState::Movement);
     return Ok(());
 }
