@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use super::calculate::TileMovementEvent;
 use crate::components::position::Position;
 use crate::components::tile::Tile;
+use crate::constants::TILE_FONT_SIZE;
 use crate::error::handle_query_entity_errors;
 use crate::states::game_state::GameState;
 
@@ -54,6 +55,7 @@ pub fn update_tiles(
     for (tile, pos, mut trans, mut text, mut sprite) in query.iter_mut() {
         *trans = pos.clone().into();
         text.sections[0].value = tile.to_string();
+        text.sections[0].style.font_size = TILE_FONT_SIZE / tile.to_string().len() as f32;
         sprite.color = tile.clone().into();
     }
 }
