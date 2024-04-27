@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use bevy_prng::WyRand;
 use bevy_rand::plugin::EntropyPlugin;
 
+mod bundle;
 mod components;
 mod constants;
 mod error;

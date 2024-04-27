@@ -6,9 +6,9 @@ use bevy::{
 };
 
 use crate::{
+    bundle::{background_board::create_background_board, tile::create_tile},
     components::{position::Position, tile::Tile},
     states::game_state::GameState,
-    util::{background_board::create_background_board, tile::create_tile},
 };
 
 pub struct SetupPlugin;

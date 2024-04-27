@@ -5,11 +5,11 @@ use bevy_rand::resource::GlobalEntropy;
 use rand_core::RngCore;
 use std::collections::BTreeSet;
 
+use crate::bundle::tile::create_tile;
 use crate::components::position::Position;
 use crate::components::tile::Tile;
 use crate::states::game_state::GameState;
 use crate::util::position::{check_positions_are_full, get_positions_complement_set};
-use crate::util::tile::create_tile;
 
 pub struct SpawnPlugin;
 
