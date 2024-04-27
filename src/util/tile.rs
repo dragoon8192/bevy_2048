@@ -15,6 +15,22 @@ use crate::constants::TILE_SIZE_2D;
 //     return tiles_layout;
 // }
 
+#[derive(Bundle)]
+struct TileBundle {
+    tile: Tile,
+    position: Position,
+    sprite_bunble: SpriteBundle,
+}
+impl Default for TileBundle {
+    fn default() -> Self {
+        return Self {
+            tile: Tile(2),
+            position: Position { x: 0, y: 0 },
+            sprite_bunble: default(),
+        };
+    }
+}
+
 // 任意の Position への Tile の追加
 pub fn create_tile(
     commands: &mut Commands,
@@ -32,27 +48,30 @@ pub fn create_tile(
         },
     );
     commands
-        .spawn_empty()
-        .insert(tile)
-        .insert(position.clone())
-        .insert(SpriteBundle {
-            sprite: Sprite {
-                color: Color::from(tile),
-                custom_size: TILE_SIZE_2D,
+        .spawn(TileBundle {
+            tile,
+            position,
+            sprite_bunble: SpriteBundle {
+                sprite: Sprite {
+                    color: Color::from(tile),
+                    custom_size: TILE_SIZE_2D,
+                    ..default()
+                },
+                transform: position.into(),
                 ..default()
             },
-            transform: position.into(),
-            ..default()
         })
-        .insert(Text2dBundle {
-            text,
-            transform: position.to_transform(20.0),
-            text_2d_bounds: Text2dBounds {
-                size: Vec2 {
-                    x: TILE_FONT_SIZE,
-                    y: TILE_FONT_SIZE,
+        .with_children(|parent| {
+            parent.spawn(Text2dBundle {
+                text,
+                transform: Transform::from_xyz(0.0, 0.0, 10.0),
+                text_2d_bounds: Text2dBounds {
+                    size: Vec2 {
+                        x: TILE_FONT_SIZE,
+                        y: TILE_FONT_SIZE,
+                    },
                 },
-            },
-            ..default()
+                ..default()
+            });
         });
 }

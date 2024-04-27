@@ -4,7 +4,6 @@ use bevy::prelude::*;
 use super::calculate::TileMovementEvent;
 use crate::components::position::Position;
 use crate::components::tile::Tile;
-use crate::constants::TILE_FONT_SIZE;
 use crate::error::handle_query_entity_errors;
 use crate::states::game_state::GameState;
 
@@ -15,7 +14,7 @@ impl Plugin for MovementPlugin {
             OnEnter(GameState::Movement),
             (
                 move_tiles.pipe(handle_query_entity_errors),
-                update_tiles,
+                update_tiles.pipe(handle_query_entity_errors),
                 GameState::Spawn.set_next(),
             )
                 .chain(),
@@ -38,7 +37,7 @@ pub fn move_tiles(
             &TileMovementEvent::Merge(e0, e1, _) => {
                 let (_, mut tile0) = query.get_mut(e0)?;
                 tile0.double();
-                commands.entity(e1).despawn();
+                commands.entity(e1).despawn_recursive();
             }
         }
     }
@@ -46,16 +45,22 @@ pub fn move_tiles(
 }
 
 pub fn update_tiles(
-    mut query: Query<
-        (&Tile, &Position, &mut Transform, &mut Text, &mut Sprite),
+    mut query_p: Query<
+        (&Tile, &Position, &mut Transform, &mut Sprite, &Children),
         Or<(Changed<Tile>, Changed<Position>)>,
     >,
-) {
+    mut query_c: Query<(&mut Transform, &mut Text), Without<Tile>>,
+) -> Result<(), QueryEntityError> {
     dbg!("System: update_tiles");
-    for (tile, pos, mut trans, mut text, mut sprite) in query.iter_mut() {
-        *trans = pos.clone().into();
-        text.sections[0].value = tile.to_string();
-        text.sections[0].style.font_size = TILE_FONT_SIZE / tile.to_string().len() as f32;
-        sprite.color = tile.clone().into();
+    for (tile, pos, mut trans_p, mut sprite, children) in query_p.iter_mut() {
+        *trans_p = (*pos).into();
+        for child in children.iter() {
+            let (mut trans_c, mut text) = query_c.get_mut(*child)?;
+            text.sections[0].value = tile.to_string();
+            trans_c.scale.x = 1.0 / tile.to_string().len() as f32;
+            // text.sections[0].style.font_size = TILE_FONT_SIZE / tile.to_string().len() as f32;
+        }
+        sprite.color = (*tile).into();
     }
+    return Ok(());
 }
