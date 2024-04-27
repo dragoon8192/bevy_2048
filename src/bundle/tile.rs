@@ -21,6 +21,7 @@ struct TileBundle {
     position: Position,
     sprite_bunble: SpriteBundle,
 }
+
 impl Default for TileBundle {
     fn default() -> Self {
         return Self {
