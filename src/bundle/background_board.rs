@@ -7,6 +7,7 @@ use crate::{
 use bevy::prelude::*;
 use itertools::iproduct;
 
+// 背景の大きな盤
 #[derive(Bundle)]
 struct BackgroundBoardBundle {
     background: Background,
@@ -37,6 +38,7 @@ impl BackgroundBoardBundle {
     }
 }
 
+// 背景の小さなタイル
 #[derive(Bundle)]
 struct BackgroundTileBundle {
     background: Background,
@@ -68,7 +70,6 @@ impl BackgroundTileBundle {
 }
 
 pub fn create_background_board(commands: &mut Commands) {
-    // 大きな盤
     commands
         .spawn(BackgroundBoardBundle::default())
         .with_children(BackgroundBoardBundle::child_builder);
