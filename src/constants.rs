@@ -21,6 +21,9 @@ pub const MAIN_BOARD_HEIGHT: f32 = TILE_HEIGHT * GRID_HEIGHT as f32
 pub const MAIN_BOARD_SIZE_2D: Option<Vec2> = Some(Vec2::new(MAIN_BOARD_WIDTH, MAIN_BOARD_HEIGHT));
 pub const MAIN_BOARD_PADDING: f32 = 18.0;
 
+pub const SCORE_BOARD_HEIGHT: f32 = 80.0;
+pub const SCORE_BOARD_SIZE_2D: Option<Vec2> = Some(Vec2::new(MAIN_BOARD_WIDTH, SCORE_BOARD_HEIGHT));
+
 pub const TILE_COLOR_0: Color = Color::rgb(0.0, 0.922, 0.5);
 pub const TILE_COLOR_1: Color = Color::rgb(0.0, 0.5, 0.922);
 
