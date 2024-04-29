@@ -67,7 +67,7 @@ impl ScoreBoardBundle {
     }
 }
 
-pub fn create_score_board(commands: &mut Commands, asset_server: &Res<AssetServer>) {
+pub fn create_score_board(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font = asset_server.load("fonts/Kenney Space.ttf");
     commands
         .spawn(ScoreBoardBundle::default())

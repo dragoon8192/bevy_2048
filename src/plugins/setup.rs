@@ -1,16 +1,13 @@
 use bevy::{
     app::{Plugin, Startup, Update},
-    asset::AssetServer,
     core_pipeline::core_2d::Camera2dBundle,
-    ecs::system::{Commands, Res},
+    ecs::system::Commands,
 };
+use itertools::Itertools;
 
 use crate::{
-    bundle::{
-        background_board::create_background_board, score_board::create_score_board,
-        tile::create_tile,
-    },
-    components::{position::Position, tile::Tile},
+    bundle::{background_board::create_background_board, score_board::create_score_board},
+    plugins::spawn::create_random_tile,
     states::game_state::GameState,
 };
 
@@ -18,17 +15,16 @@ pub struct SetupPlugin;
 
 impl Plugin for SetupPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
+        let tuple: (_, _, _) = [create_random_tile; 3].iter().collect_tuple().unwrap();
         app.init_state::<GameState>()
-            .add_systems(Startup, setup)
+            .add_systems(
+                Startup,
+                (setup, create_background_board, create_score_board, tuple),
+            )
             .add_systems(Update, bevy::window::close_on_esc);
     }
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    create_background_board(&mut commands);
-    create_score_board(&mut commands, &asset_server);
-    for (i, j, num) in [(1, 0, 2), (3, 0, 4), (1, 3, 8)] {
-        create_tile(&mut commands, &asset_server, Tile(num), Position::new(i, j));
-    }
 }

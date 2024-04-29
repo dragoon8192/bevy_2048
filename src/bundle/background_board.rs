@@ -69,7 +69,7 @@ impl BackgroundTileBundle {
     }
 }
 
-pub fn create_background_board(commands: &mut Commands) {
+pub fn create_background_board(mut commands: Commands) {
     commands
         .spawn(BackgroundBoardBundle::default())
         .with_children(BackgroundBoardBundle::child_builder);
