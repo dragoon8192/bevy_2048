@@ -8,6 +8,7 @@ mod components;
 mod constants;
 mod error;
 mod plugins;
+mod resources;
 mod states;
 mod structs;
 mod util;
