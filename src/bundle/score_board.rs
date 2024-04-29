@@ -41,15 +41,26 @@ impl ScoreBoardBundle {
     fn child_builder(font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         return move |parent| {
             parent.spawn(Text2dBundle {
-                text: Text::from_section(
-                    "score 0",
-                    TextStyle {
-                        font,
-                        font_size: SCORE_FONT_SIZE,
-                        color: SCORE_TEXT_COLOR,
-                        ..default()
-                    },
-                ),
+                text: Text::from_sections([
+                    TextSection::new(
+                        "score:",
+                        TextStyle {
+                            font: font.clone(),
+                            font_size: SCORE_FONT_SIZE,
+                            color: SCORE_TEXT_COLOR,
+                            ..default()
+                        },
+                    ),
+                    TextSection::new(
+                        "0",
+                        TextStyle {
+                            font: font.clone(),
+                            font_size: SCORE_FONT_SIZE,
+                            color: SCORE_TEXT_COLOR,
+                            ..default()
+                        },
+                    ),
+                ]),
                 ..default()
             });
         };
