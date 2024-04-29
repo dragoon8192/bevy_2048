@@ -1,7 +1,7 @@
 use crate::{
     components::{background_board::Background, position::Position},
     constants::{
-        BOARD_COLOR_0, BOARD_COLOR_1, BOARD_SIZE_2D, GRID_HEIGHT, GRID_WIDTH, TILE_SIZE_2D,
+        BOARD_COLOR_0, BOARD_COLOR_1, GRID_HEIGHT, GRID_WIDTH, MAIN_BOARD_SIZE_2D, TILE_SIZE_2D,
     },
 };
 use bevy::prelude::*;
@@ -21,7 +21,7 @@ impl Default for BackgroundBoardBundle {
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
                     color: BOARD_COLOR_0,
-                    custom_size: BOARD_SIZE_2D,
+                    custom_size: MAIN_BOARD_SIZE_2D,
                     ..default()
                 },
                 ..default()
