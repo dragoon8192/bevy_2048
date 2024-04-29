@@ -64,7 +64,7 @@ impl Default for BackgroundTileBundle {
 impl BackgroundTileBundle {
     fn new(i: usize, j: usize) -> Self {
         let mut val = Self::default();
-        val.sprite_bunble.transform = Position::new(i, j).to_transform(0.0);
+        val.sprite_bunble.transform = Position::new(i, j).to_transform(5.0);
         return val;
     }
 }
