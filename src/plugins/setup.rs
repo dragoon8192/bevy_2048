@@ -6,7 +6,10 @@ use bevy::{
 };
 
 use crate::{
-    bundle::{background_board::create_background_board, tile::create_tile},
+    bundle::{
+        background_board::create_background_board, score_board::create_score_board,
+        tile::create_tile,
+    },
     components::{position::Position, tile::Tile},
     states::game_state::GameState,
 };
@@ -24,6 +27,7 @@ impl Plugin for SetupPlugin {
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
     create_background_board(&mut commands);
+    create_score_board(&mut commands, &asset_server);
     for (i, j, num) in [(1, 0, 2), (3, 0, 4), (1, 3, 8)] {
         create_tile(&mut commands, &asset_server, Tile(num), Position::new(i, j));
     }
