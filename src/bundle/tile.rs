@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 use bevy::text::{Text, Text2dBounds};
 
-use crate::components::position::Position;
-use crate::components::tile::Tile;
-use crate::constants::TILE_FONT_SIZE;
-use crate::constants::TILE_SIZE_2D;
+use crate::{
+    components::{position::Position, tile::Tile},
+    constants::{TILE_FONT_SIZE, TILE_SIZE_2D, TILE_TEXT_COLOR},
+};
 
 // // 盤面の状態の取得
 // pub fn get_tiles_layout(lens: &mut QueryLens<&Position>) -> GridArray<bool> {
@@ -15,7 +15,7 @@ use crate::constants::TILE_SIZE_2D;
 //     return tiles_layout;
 // }
 
-#[derive(Bundle)]
+#[derive(Bundle, Clone)]
 struct TileBundle {
     tile: Tile,
     position: Position,
@@ -24,10 +24,53 @@ struct TileBundle {
 
 impl Default for TileBundle {
     fn default() -> Self {
+        let tile = Tile(2);
+        let position = Position { x: 0, y: 0 };
         return Self {
-            tile: Tile(2),
-            position: Position { x: 0, y: 0 },
-            sprite_bunble: default(),
+            tile,
+            position,
+            sprite_bunble: SpriteBundle {
+                sprite: Sprite {
+                    color: Color::from(tile),
+                    custom_size: TILE_SIZE_2D,
+                    ..default()
+                },
+                transform: position.into(),
+                ..default()
+            },
+        };
+    }
+}
+
+impl TileBundle {
+    fn new(tile: Tile, position: Position) -> Self {
+        let mut val = Self::default();
+        val.tile = tile;
+        val.position = position;
+        val.sprite_bunble.transform = position.into();
+        return val;
+    }
+    fn child_builder(&self, font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
+        let text = Text::from_section(
+            self.tile.to_string(),
+            TextStyle {
+                font,
+                font_size: TILE_FONT_SIZE,
+                color: TILE_TEXT_COLOR,
+            },
+        );
+        return move |parent| {
+            parent.spawn(Text2dBundle {
+                text,
+                transform: Transform::from_xyz(0.0, 0.0, 5.0),
+                text_2d_bounds: Text2dBounds {
+                    size: Vec2 {
+                        x: TILE_FONT_SIZE,
+                        y: TILE_FONT_SIZE,
+                    },
+                },
+                ..default()
+            });
         };
     }
 }
@@ -40,39 +83,8 @@ pub fn create_tile(
     position: Position,
 ) {
     let font = asset_server.load("fonts/Kenney Space.ttf");
-    let text = Text::from_section(
-        tile.to_string(),
-        TextStyle {
-            font,
-            font_size: TILE_FONT_SIZE,
-            color: Color::GRAY,
-        },
-    );
+    let tile_bundle = TileBundle::new(tile, position);
     commands
-        .spawn(TileBundle {
-            tile,
-            position,
-            sprite_bunble: SpriteBundle {
-                sprite: Sprite {
-                    color: Color::from(tile),
-                    custom_size: TILE_SIZE_2D,
-                    ..default()
-                },
-                transform: position.into(),
-                ..default()
-            },
-        })
-        .with_children(|parent| {
-            parent.spawn(Text2dBundle {
-                text,
-                transform: Transform::from_xyz(0.0, 0.0, 10.0),
-                text_2d_bounds: Text2dBounds {
-                    size: Vec2 {
-                        x: TILE_FONT_SIZE,
-                        y: TILE_FONT_SIZE,
-                    },
-                },
-                ..default()
-            });
-        });
+        .spawn(tile_bundle.clone())
+        .with_children(tile_bundle.child_builder(font));
 }
