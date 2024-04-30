@@ -35,13 +35,13 @@ pub fn create_random_tile(
     dbg!("System: create_random_tile");
     let candidates_of_positions: BTreeSet<Position> =
         get_positions_complement_set(query.transmute_lens());
-    let rnd_n = rng.next_u64() as usize % candidates_of_positions.len();
+    let rnd_n = rng.next_u32() as usize % candidates_of_positions.len();
     let position = candidates_of_positions
         .iter()
         .nth(rnd_n)
         .expect("candidates_of_positions: out of range!!")
         .clone();
-    let rnd_0_or_1 = rng.next_u32() % 2;
-    let tile = Tile(2usize.pow(rnd_0_or_1 + 1));
+    let rnd_1_or_2 = 1_u8 + (rng.next_u32() % 2) as u8;
+    let tile = Tile(rnd_1_or_2);
     tile_spawn_evw.send(TileSpawnEvent { tile, position });
 }

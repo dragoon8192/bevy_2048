@@ -24,7 +24,7 @@ struct TileBundle {
 
 impl Default for TileBundle {
     fn default() -> Self {
-        let tile = Tile(2);
+        let tile = Tile(1);
         let position = Position { x: 0, y: 0 };
         return Self {
             tile,
