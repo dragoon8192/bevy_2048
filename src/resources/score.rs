@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Resource)]
-struct Score(usize);
+pub struct Score(usize);
 
 impl Default for Score {
     fn default() -> Self {

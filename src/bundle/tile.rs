@@ -75,16 +75,23 @@ impl TileBundle {
     }
 }
 
+#[derive(Event, Eq, PartialEq)]
+pub struct TileSpawnEvent {
+    pub tile: Tile,
+    pub position: Position,
+}
+
 // 任意の Position への Tile の追加
-pub fn create_tile(
-    commands: &mut Commands,
-    asset_server: &Res<AssetServer>,
-    tile: Tile,
-    position: Position,
+pub fn spawn_tiles(
+    mut tile_spawn_evr: EventReader<TileSpawnEvent>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
 ) {
-    let font = asset_server.load("fonts/Kenney Space.ttf");
-    let tile_bundle = TileBundle::new(tile, position);
-    commands
-        .spawn(tile_bundle.clone())
-        .with_children(tile_bundle.child_builder(font));
+    for ev in tile_spawn_evr.read() {
+        let font = asset_server.load("fonts/Kenney Space.ttf");
+        let tile_bundle = TileBundle::new(ev.tile, ev.position);
+        commands
+            .spawn(tile_bundle.clone())
+            .with_children(tile_bundle.child_builder(font));
+    }
 }

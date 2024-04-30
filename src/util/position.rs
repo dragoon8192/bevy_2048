@@ -1,23 +1,24 @@
+use bevy::ecs::query::With;
 use bevy::ecs::system::{Query, QueryLens};
 use itertools::iproduct;
 use std::collections::BTreeSet;
 
 use crate::components::position::Position;
+use crate::components::tile::Tile;
 use crate::constants::GRID_HEIGHT;
 use crate::constants::GRID_WIDTH;
 
 fn get_positions_set(mut lens: QueryLens<&Position>) -> BTreeSet<Position> {
     let query: Query<'_, '_, &Position> = lens.query();
-    let iter = query.iter().cloned();
-    return BTreeSet::from_iter(iter);
+    return BTreeSet::from_iter(query.iter().cloned());
 }
 
 fn generate_universal_position_set() -> BTreeSet<Position> {
     return BTreeSet::from_iter(iproduct!(0..GRID_WIDTH, 0..GRID_HEIGHT).map(Position::from));
 }
 
-pub fn check_positions_are_full(lens: QueryLens<&Position>) -> bool {
-    let positions_set = get_positions_set(lens);
+pub fn board_is_full(mut query: Query<&Position, With<Tile>>) -> bool {
+    let positions_set = get_positions_set(query.transmute_lens());
     let univ_set = generate_universal_position_set();
     return positions_set == univ_set;
 }
