@@ -3,7 +3,6 @@ use bevy::{
     core_pipeline::core_2d::Camera2dBundle,
     ecs::{schedule::IntoSystemConfigs, system::Commands},
 };
-use itertools::Itertools;
 
 use crate::{
     bundle::{
@@ -20,8 +19,6 @@ pub struct SetupPlugin;
 
 impl Plugin for SetupPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        let create_3_random_tiles: (_, _, _) =
-            [create_random_tile; 3].iter().collect_tuple().unwrap();
         app.init_state::<GameState>()
             .add_event::<TileSpawnEvent>()
             .add_systems(
@@ -30,7 +27,7 @@ impl Plugin for SetupPlugin {
                     setup,
                     create_background_board,
                     create_score_board,
-                    (create_3_random_tiles, spawn_tiles).chain(),
+                    (create_random_tile, spawn_tiles).chain(),
                 ),
             )
             .add_systems(Update, bevy::window::close_on_esc);
