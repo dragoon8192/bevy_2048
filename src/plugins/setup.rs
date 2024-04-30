@@ -1,16 +1,13 @@
 use bevy::{
     app::{Plugin, Startup, Update},
     core_pipeline::core_2d::Camera2dBundle,
-    ecs::{schedule::IntoSystemConfigs, system::Commands},
+    ecs::system::Commands,
 };
 
 use crate::{
     bundle::{
-        background_board::create_background_board,
-        score_board::create_score_board,
-        tile::{spawn_tiles, TileSpawnEvent},
+        main_board::create_main_board, score_board::create_score_board, tile::TileSpawnEvent,
     },
-    plugins::spawn::create_random_tile,
     resources::score::Score,
     states::game_state::GameState,
 };
@@ -25,9 +22,9 @@ impl Plugin for SetupPlugin {
                 Startup,
                 (
                     setup,
-                    create_background_board,
+                    create_main_board,
                     create_score_board,
-                    (create_random_tile, spawn_tiles).chain(),
+                    GameState::Spawn.set_next(),
                 ),
             )
             .add_systems(Update, bevy::window::close_on_esc);

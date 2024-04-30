@@ -1,5 +1,5 @@
 use crate::{
-    components::{background_board::Background, position::Position},
+    components::{main_board::MainBoard, position::Position},
     constants::{
         BOARD_COLOR_0, BOARD_COLOR_1, GRID_HEIGHT, GRID_WIDTH, MAIN_BOARD_SIZE_2D, TILE_SIZE_2D,
     },
@@ -9,15 +9,15 @@ use itertools::iproduct;
 
 // 背景の大きな盤
 #[derive(Bundle)]
-struct BackgroundBoardBundle {
-    background: Background,
+struct MainBoardBundle {
+    main_board: MainBoard,
     sprite_bunble: SpriteBundle,
 }
 
-impl Default for BackgroundBoardBundle {
+impl Default for MainBoardBundle {
     fn default() -> Self {
         return Self {
-            background: Background,
+            main_board: MainBoard,
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
                     color: BOARD_COLOR_0,
@@ -30,25 +30,25 @@ impl Default for BackgroundBoardBundle {
     }
 }
 
-impl BackgroundBoardBundle {
+impl MainBoardBundle {
     fn child_builder(parent: &mut ChildBuilder) {
         for (i, j) in iproduct!(0..GRID_WIDTH, 0..GRID_HEIGHT) {
-            parent.spawn(BackgroundTileBundle::new(i, j));
+            parent.spawn(MainBoardTileBundle::new(i, j));
         }
     }
 }
 
 // 背景の小さなタイル
 #[derive(Bundle)]
-struct BackgroundTileBundle {
-    background: Background,
+struct MainBoardTileBundle {
+    main_board: MainBoard,
     sprite_bunble: SpriteBundle,
 }
 
-impl Default for BackgroundTileBundle {
+impl Default for MainBoardTileBundle {
     fn default() -> Self {
         return Self {
-            background: Background,
+            main_board: MainBoard,
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
                     color: BOARD_COLOR_1,
@@ -61,7 +61,7 @@ impl Default for BackgroundTileBundle {
     }
 }
 
-impl BackgroundTileBundle {
+impl MainBoardTileBundle {
     fn new(i: usize, j: usize) -> Self {
         let mut val = Self::default();
         val.sprite_bunble.transform = Position::new(i, j).to_transform(5.0);
@@ -69,8 +69,8 @@ impl BackgroundTileBundle {
     }
 }
 
-pub fn create_background_board(mut commands: Commands) {
+pub fn create_main_board(mut commands: Commands) {
     commands
-        .spawn(BackgroundBoardBundle::default())
-        .with_children(BackgroundBoardBundle::child_builder);
+        .spawn(MainBoardBundle::default())
+        .with_children(MainBoardBundle::child_builder);
 }
