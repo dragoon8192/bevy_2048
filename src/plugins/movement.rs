@@ -1,11 +1,12 @@
-use bevy::ecs::query::QueryEntityError;
-use bevy::prelude::*;
+use bevy::{ecs::query::QueryEntityError, prelude::*};
 
-use super::calculate::TileMovementEvent;
-use crate::components::position::Position;
-use crate::components::tile::Tile;
-use crate::error::handle_query_entity_errors;
-use crate::states::game_state::GameState;
+use crate::{
+    components::{position::Position, score_board::ScoreBoard, tile::Tile},
+    error::handle_query_entity_errors,
+    plugins::calculate::TileMovementEvent,
+    resources::score::Score,
+    states::game_state::GameState,
+};
 
 pub struct MovementPlugin;
 impl Plugin for MovementPlugin {
@@ -15,6 +16,7 @@ impl Plugin for MovementPlugin {
             (
                 move_tiles.pipe(handle_query_entity_errors),
                 update_tiles.pipe(handle_query_entity_errors),
+                update_score.pipe(handle_query_entity_errors),
                 GameState::Spawn.set_next(),
             )
                 .chain(),
@@ -26,6 +28,7 @@ pub fn move_tiles(
     mut tile_move_evr: EventReader<TileMovementEvent>,
     mut query: Query<(&mut Position, &mut Tile)>,
     mut commands: Commands,
+    mut score: ResMut<Score>,
 ) -> Result<(), QueryEntityError> {
     dbg!("System: move_tiles");
     for ev in tile_move_evr.read() {
@@ -37,6 +40,7 @@ pub fn move_tiles(
             &TileMovementEvent::Merge(e0, e1, _) => {
                 let (_, mut tile0) = query.get_mut(e0)?;
                 tile0.double();
+                score.add(tile0.num());
                 commands.entity(e1).despawn_recursive();
             }
         }
@@ -49,7 +53,7 @@ pub fn update_tiles(
         (&Tile, &Position, &mut Transform, &mut Sprite, &Children),
         Or<(Changed<Tile>, Changed<Position>)>,
     >,
-    mut query_c: Query<(&mut Transform, &mut Text), Without<Tile>>,
+    mut query_c: Query<(&mut Transform, &mut Text), (With<Parent>, Without<Children>)>,
 ) -> Result<(), QueryEntityError> {
     dbg!("System: update_tiles");
     for (tile, pos, mut trans_p, mut sprite, children) in query_p.iter_mut() {
@@ -61,6 +65,21 @@ pub fn update_tiles(
             // text.sections[0].style.font_size = TILE_FONT_SIZE / tile.to_string().len() as f32;
         }
         sprite.color = (*tile).into();
+    }
+    return Ok(());
+}
+
+pub fn update_score(
+    query_p: Query<&Children, With<ScoreBoard>>,
+    mut query_c: Query<&mut Text, (With<Parent>, Without<Children>)>,
+    score: Res<Score>,
+) -> Result<(), QueryEntityError> {
+    if score.is_changed() {
+        let children = query_p.single();
+        for child in children.iter() {
+            let mut text = query_c.get_mut(*child)?;
+            text.sections[1].value = score.to_string();
+        }
     }
     return Ok(());
 }
