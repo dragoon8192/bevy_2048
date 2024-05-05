@@ -2,35 +2,40 @@ use bevy::prelude::*;
 
 use crate::{
     components::score_board::ScoreBoard,
+    components::score_text::ScoreText,
     constants::{
-        BOARD_COLOR_0, MAIN_AND_SCORE_BOARD_MARGIN, MAIN_BOARD_HEIGHT, SCORE_BOARD_HEIGHT,
-        SCORE_BOARD_SIZE_2D, SCORE_FONT_SIZE, SCORE_TEXT_COLOR,
+        BOARD_COLOR_0, MAIN_AND_SCORE_BOARD_MARGIN, MAIN_BOARD_WIDTH, SCORE_BOARD_HEIGHT,
+        SCORE_FONT_SIZE, SCORE_TEXT_COLOR,
     },
 };
 
 #[derive(Bundle)]
 struct ScoreBoardBundle {
-    score_board: ScoreBoard,
-    sprite_bundle: SpriteBundle,
+    marker: ScoreBoard,
+    node_bundle: NodeBundle,
+}
+
+#[derive(Bundle)]
+struct ScoreTextBundle {
+    marker: ScoreText,
+    text_bundle: TextBundle,
 }
 
 impl Default for ScoreBoardBundle {
     fn default() -> Self {
         return Self {
-            score_board: ScoreBoard,
-            sprite_bundle: SpriteBundle {
-                sprite: Sprite {
-                    color: BOARD_COLOR_0,
-                    custom_size: SCORE_BOARD_SIZE_2D,
+            marker: ScoreBoard,
+            node_bundle: NodeBundle {
+                style: Style {
+                    width: Val::Px(MAIN_BOARD_WIDTH),
+                    height: Val::Px(SCORE_BOARD_HEIGHT),
+                    flex_direction: FlexDirection::Row,
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::SpaceBetween,
+                    margin: UiRect::all(Val::Px(MAIN_AND_SCORE_BOARD_MARGIN)),
                     ..default()
                 },
-                transform: Transform::from_xyz(
-                    0.0,
-                    MAIN_BOARD_HEIGHT / 2.0
-                        + SCORE_BOARD_HEIGHT / 2.0
-                        + MAIN_AND_SCORE_BOARD_MARGIN,
-                    0.0,
-                ),
+                background_color: BackgroundColor(BOARD_COLOR_0),
                 ..default()
             },
         };
@@ -39,29 +44,17 @@ impl Default for ScoreBoardBundle {
 
 impl ScoreBoardBundle {
     fn child_builder(font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
+        let style = TextStyle {
+            font: font.clone(),
+            font_size: SCORE_FONT_SIZE,
+            color: SCORE_TEXT_COLOR,
+            ..default()
+        };
         return move |parent| {
-            parent.spawn(Text2dBundle {
-                text: Text::from_sections([
-                    TextSection::new(
-                        "score:",
-                        TextStyle {
-                            font: font.clone(),
-                            font_size: SCORE_FONT_SIZE,
-                            color: SCORE_TEXT_COLOR,
-                            ..default()
-                        },
-                    ),
-                    TextSection::new(
-                        "0",
-                        TextStyle {
-                            font: font.clone(),
-                            font_size: SCORE_FONT_SIZE,
-                            color: SCORE_TEXT_COLOR,
-                            ..default()
-                        },
-                    ),
-                ]),
-                ..default()
+            parent.spawn(TextBundle::from_section("score:", style.clone()));
+            parent.spawn(ScoreTextBundle {
+                marker: ScoreText,
+                text_bundle: TextBundle::from_section("0", style.clone()),
             });
         };
     }

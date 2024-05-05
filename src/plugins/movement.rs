@@ -1,7 +1,7 @@
 use bevy::{ecs::query::QueryEntityError, prelude::*};
 
 use crate::{
-    components::{position::Position, score_board::ScoreBoard, tile::Tile},
+    components::{position::Position, score_text::ScoreText, tile::Tile},
     error::handle_query_entity_errors,
     plugins::calculate::TileMovementEvent,
     resources::score::Score,
@@ -70,16 +70,10 @@ pub fn update_tiles(
 }
 
 pub fn update_score(
-    query_p: Query<&Children, With<ScoreBoard>>,
-    mut query_c: Query<&mut Text, (With<Parent>, Without<Children>)>,
+    mut query: Query<&mut Text, With<ScoreText>>,
     score: Res<Score>,
 ) -> Result<(), QueryEntityError> {
-    if score.is_changed() {
-        let children = query_p.single();
-        for child in children.iter() {
-            let mut text = query_c.get_mut(*child)?;
-            text.sections[1].value = score.to_string();
-        }
-    }
+    let mut text = query.single_mut();
+    text.sections[0].value = score.to_string();
     return Ok(());
 }
