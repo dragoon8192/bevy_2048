@@ -1,6 +1,7 @@
 use bevy::{math::f32, prelude::Vec2, render::color::Color};
 
-pub const WINDOW_SIZE: f32 = 500.0;
+pub const WINDOW_WIDTH: f32 = MAIN_BOARD_WIDTH;
+pub const WINDOW_HEIGHT: f32 = MAIN_BOARD_HEIGHT + SCORE_BOARD_HEIGHT + MAIN_AND_SCORE_BOARD_MARGIN;
 
 pub const GRID_WIDTH: usize = 4;
 pub const GRID_HEIGHT: usize = 4;

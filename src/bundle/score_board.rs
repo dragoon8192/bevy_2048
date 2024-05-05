@@ -32,7 +32,9 @@ impl Default for ScoreBoardBundle {
                     flex_direction: FlexDirection::Row,
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceBetween,
-                    margin: UiRect::all(Val::Px(MAIN_AND_SCORE_BOARD_MARGIN)),
+                    position_type: PositionType::Absolute,
+                    top: Val::Px(0.0),
+                    left: Val::Px(0.0),
                     ..default()
                 },
                 background_color: BackgroundColor(BOARD_COLOR_0),

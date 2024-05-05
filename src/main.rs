@@ -13,13 +13,13 @@ mod states;
 mod structs;
 mod util;
 
-use constants::WINDOW_SIZE;
+use constants::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use plugins::game_plugin_group::GamePluginGroup;
 
 fn main() {
     let window = Window {
         title: "2048".to_string(),
-        resolution: (WINDOW_SIZE, WINDOW_SIZE).into(),
+        resolution: (WINDOW_WIDTH, WINDOW_HEIGHT).into(),
         ..default()
     };
 
