@@ -10,14 +10,14 @@ use itertools::iproduct;
 // 背景の大きな盤
 #[derive(Bundle)]
 struct MainBoardBundle {
-    main_board: MainBoard,
+    marker: MainBoard,
     sprite_bunble: SpriteBundle,
 }
 
 impl Default for MainBoardBundle {
     fn default() -> Self {
         return Self {
-            main_board: MainBoard,
+            marker: MainBoard,
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
                     color: BOARD_COLOR_0,
@@ -41,14 +41,12 @@ impl MainBoardBundle {
 // 背景の小さなタイル
 #[derive(Bundle)]
 struct MainBoardTileBundle {
-    main_board: MainBoard,
     sprite_bunble: SpriteBundle,
 }
 
 impl Default for MainBoardTileBundle {
     fn default() -> Self {
         return Self {
-            main_board: MainBoard,
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
                     color: BOARD_COLOR_1,
