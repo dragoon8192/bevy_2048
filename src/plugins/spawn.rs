@@ -37,10 +37,9 @@ pub fn create_random_tile(
         get_positions_complement_set(query.transmute_lens());
     let rnd_n = rng.next_u32() as usize % candidates_of_positions.len();
     let position = candidates_of_positions
-        .iter()
+        .into_iter()
         .nth(rnd_n)
-        .expect("candidates_of_positions: out of range!!")
-        .clone();
+        .expect("candidates_of_positions: out of range!!");
     let rnd_1_or_2 = 1_u8 + (rng.next_u32() % 2) as u8;
     let tile = Tile(rnd_1_or_2);
     tile_spawn_evw.send(TileSpawnEvent { tile, position });
