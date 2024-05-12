@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy::text::{Text, Text2dBounds};
 
+use crate::components::main_board::MainBoard;
 use crate::{
     components::{position::Position, tile::Tile},
     constants::{TILE_FONT_SIZE, TILE_SIZE_2D, TILE_TEXT_COLOR},
@@ -32,7 +33,7 @@ impl Default for TileBundle {
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
                     color: Color::from(tile),
-                    custom_size: TILE_SIZE_2D,
+                    custom_size: Some(TILE_SIZE_2D),
                     ..default()
                 },
                 transform: position.into(),
@@ -85,13 +86,17 @@ pub struct TileSpawnEvent {
 pub fn spawn_tiles(
     mut tile_spawn_evr: EventReader<TileSpawnEvent>,
     mut commands: Commands,
+    query_p: Query<Entity, With<MainBoard>>,
     asset_server: Res<AssetServer>,
 ) {
     for ev in tile_spawn_evr.read() {
         let font = asset_server.load("fonts/Kenney Space.ttf");
         let tile_bundle = TileBundle::new(ev.tile, ev.position);
-        commands
+        let child = commands
             .spawn(tile_bundle.clone())
-            .with_children(tile_bundle.child_builder(font));
+            .with_children(tile_bundle.child_builder(font))
+            .id();
+        let parent = query_p.single();
+        commands.entity(parent).push_children(&[child]);
     }
 }

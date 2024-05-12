@@ -4,8 +4,7 @@ use crate::{
     components::score_board::ScoreBoard,
     components::score_text::ScoreText,
     constants::{
-        BOARD_COLOR_0, MAIN_AND_SCORE_BOARD_MARGIN, MAIN_BOARD_WIDTH, SCORE_BOARD_HEIGHT,
-        SCORE_FONT_SIZE, SCORE_TEXT_COLOR,
+        BOARD_COLOR_0, MAIN_BOARD_WIDTH, SCORE_BOARD_HEIGHT, SCORE_FONT_SIZE, SCORE_TEXT_COLOR,
     },
 };
 

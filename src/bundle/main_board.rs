@@ -1,7 +1,8 @@
 use crate::{
     components::{main_board::MainBoard, position::Position},
     constants::{
-        BOARD_COLOR_0, BOARD_COLOR_1, GRID_HEIGHT, GRID_WIDTH, MAIN_BOARD_SIZE_2D, TILE_SIZE_2D,
+        BOARD_COLOR_0, BOARD_COLOR_1, GRID_HEIGHT, GRID_WIDTH, MAIN_BOARD_SIZE_2D,
+        SCORE_BOARD_HEIGHT, TILE_SIZE_2D,
     },
 };
 use bevy::prelude::*;
@@ -21,9 +22,10 @@ impl Default for MainBoardBundle {
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
                     color: BOARD_COLOR_0,
-                    custom_size: MAIN_BOARD_SIZE_2D,
+                    custom_size: Some(MAIN_BOARD_SIZE_2D),
                     ..default()
                 },
+                transform: Transform::from_xyz(0.0, -SCORE_BOARD_HEIGHT / 2.0, 0.0),
                 ..default()
             },
         };
@@ -50,7 +52,7 @@ impl Default for MainBoardTileBundle {
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
                     color: BOARD_COLOR_1,
-                    custom_size: TILE_SIZE_2D,
+                    custom_size: Some(TILE_SIZE_2D),
                     ..default()
                 },
                 ..default()
