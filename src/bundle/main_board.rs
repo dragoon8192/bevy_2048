@@ -1,8 +1,8 @@
 use crate::{
     components::{main_board::MainBoard, position::Position},
     constants::{
-        BOARD_COLOR_0, BOARD_COLOR_1, GRID_HEIGHT, GRID_WIDTH, MAIN_BOARD_SIZE_2D,
-        SCORE_BOARD_HEIGHT, TILE_SIZE_2D,
+        BOARD_COLOR_0, BOARD_COLOR_1, GRID_HEIGHT, GRID_WIDTH, MAIN_AND_SCORE_BOARD_MARGIN,
+        MAIN_BOARD_SIZE_2D, SCORE_BOARD_HEIGHT, TILE_SIZE_2D,
     },
 };
 use bevy::prelude::*;
@@ -25,7 +25,11 @@ impl Default for MainBoardBundle {
                     custom_size: Some(MAIN_BOARD_SIZE_2D),
                     ..default()
                 },
-                transform: Transform::from_xyz(0.0, -SCORE_BOARD_HEIGHT / 2.0, 0.0),
+                transform: Transform::from_xyz(
+                    0.0,
+                    -(SCORE_BOARD_HEIGHT + MAIN_AND_SCORE_BOARD_MARGIN) / 2.0,
+                    0.0,
+                ),
                 ..default()
             },
         };

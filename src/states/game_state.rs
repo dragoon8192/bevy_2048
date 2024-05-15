@@ -6,10 +6,11 @@ use bevy::ecs::{
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum GameState {
     #[default]
+    MainMenu,
+    Spawn,
     Input,
     Calculate,
     Movement,
-    Spawn,
     GameOver,
 }
 

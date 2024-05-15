@@ -24,7 +24,7 @@ impl Plugin for SetupPlugin {
                     setup,
                     create_main_board,
                     create_score_board,
-                    GameState::Spawn.set_next(),
+                    GameState::MainMenu.set_next(),
                 ),
             )
             .add_systems(Update, bevy::window::close_on_esc);
