@@ -25,7 +25,12 @@ pub const MAIN_BOARD_PADDING: f32 = 18.0;
 pub const SCORE_BOARD_HEIGHT: f32 = 80.0;
 pub const SCORE_BOARD_SIZE_2D: Vec2 = Vec2::new(MAIN_BOARD_WIDTH, SCORE_BOARD_HEIGHT);
 pub const MAIN_AND_SCORE_BOARD_MARGIN: f32 = 10.0;
+
+pub const TITLE_FONT_SIZE: f32 = 60.0;
 pub const SCORE_FONT_SIZE: f32 = 40.0;
+
+pub const BACKGROUND_COLOR: Color = Color::GRAY;
+pub const TITLE_TEXT_COLOR: Color = Color::GRAY;
 
 pub const TILE_COLOR_0: Color = Color::rgb(0.0, 0.922, 0.5);
 pub const TILE_COLOR_1: Color = Color::rgb(0.0, 0.5, 0.922);

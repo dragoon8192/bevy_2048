@@ -1,13 +1,10 @@
-use bevy::{
-    app::{Plugin, Startup, Update},
-    core_pipeline::core_2d::Camera2dBundle,
-    ecs::system::Commands,
-};
+use bevy::prelude::*;
 
 use crate::{
     bundle::{
         main_board::create_main_board, score_board::create_score_board, tile::TileSpawnEvent,
     },
+    constants::BACKGROUND_COLOR,
     resources::score::Score,
     states::game_state::GameState,
 };
@@ -16,7 +13,8 @@ pub struct SetupPlugin;
 
 impl Plugin for SetupPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.init_state::<GameState>()
+        app.insert_resource(ClearColor(BACKGROUND_COLOR))
+            .init_state::<GameState>()
             .add_event::<TileSpawnEvent>()
             .add_systems(
                 Startup,
