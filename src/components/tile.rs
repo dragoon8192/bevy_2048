@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::constants::{TILE_COLOR_0, TILE_COLOR_1};
+use crate::constants::color::{TILE_COLOR_0, TILE_COLOR_1};
 
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
 pub struct Tile(pub u8);

@@ -3,8 +3,11 @@ use bevy::prelude::*;
 use crate::{
     components::main_menu::MainMenuScreen,
     constants::{
-        BOARD_COLOR_0, MAIN_BOARD_HEIGHT, MAIN_BOARD_WIDTH, SCORE_BOARD_HEIGHT, TITLE_FONT_SIZE,
-        TITLE_TEXT_COLOR, WINDOW_HEIGHT, WINDOW_WIDTH,
+        color::{BOARD_COLOR_0, TITLE_TEXT_COLOR},
+        font::{MAIN_FONT_NAME, TITLE_FONT_SIZE},
+        layout::{
+            MAIN_BOARD_HEIGHT, MAIN_BOARD_WIDTH, SCORE_BOARD_HEIGHT, WINDOW_HEIGHT, WINDOW_WIDTH,
+        },
     },
 };
 
@@ -23,8 +26,8 @@ impl Default for MainMenuScreenBundle {
                     width: Val::Px(WINDOW_WIDTH),
                     height: Val::Px(WINDOW_HEIGHT),
                     flex_direction: FlexDirection::Column,
-                    justify_content: JustifyContent::SpaceBetween,
                     align_items: AlignItems::Center,
+                    justify_content: JustifyContent::SpaceBetween,
                     ..default()
                 },
                 ..default()
@@ -37,28 +40,8 @@ impl MainMenuScreenBundle {
     fn child_builder(font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         return move |parent| {
             parent
-                .spawn(NodeBundle {
-                    style: Style {
-                        width: Val::Px(MAIN_BOARD_WIDTH),
-                        height: Val::Px(SCORE_BOARD_HEIGHT),
-                        align_items: AlignItems::Center,
-                        justify_content: JustifyContent::Center,
-                        ..default()
-                    },
-                    background_color: BackgroundColor(BOARD_COLOR_0),
-                    ..default()
-                })
-                .with_children(|parent| {
-                    parent.spawn(TextBundle::from_section(
-                        "2048.rs",
-                        TextStyle {
-                            font: font.clone(),
-                            font_size: TITLE_FONT_SIZE,
-                            color: TITLE_TEXT_COLOR,
-                            ..default()
-                        },
-                    ));
-                });
+                .spawn(TitleBoxBundle::default())
+                .with_children(TitleBoxBundle::child_builder(font));
             parent.spawn(NodeBundle {
                 style: Style {
                     width: Val::Px(MAIN_BOARD_WIDTH),
@@ -74,8 +57,90 @@ impl MainMenuScreenBundle {
     }
 }
 
+#[derive(Bundle)]
+struct TitleBoxBundle {
+    node: NodeBundle,
+}
+
+impl Default for TitleBoxBundle {
+    fn default() -> Self {
+        return Self {
+            node: NodeBundle {
+                style: Style {
+                    width: Val::Px(MAIN_BOARD_WIDTH),
+                    height: Val::Px(SCORE_BOARD_HEIGHT),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
+                    ..default()
+                },
+                background_color: BackgroundColor(BOARD_COLOR_0),
+                ..default()
+            },
+        };
+    }
+}
+
+impl TitleBoxBundle {
+    fn child_builder(font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
+        return move |parent| {
+            parent.spawn(TextBundle::from_section(
+                "2048.rs",
+                TextStyle {
+                    font: font.clone(),
+                    font_size: TITLE_FONT_SIZE,
+                    color: TITLE_TEXT_COLOR,
+                    ..default()
+                },
+            ));
+        };
+    }
+}
+
+#[derive(Bundle)]
+struct MenuBoxBundle {
+    node: NodeBundle,
+}
+
+impl Default for MenuBoxBundle {
+    fn default() -> Self {
+        return Self {
+            node: NodeBundle {
+                style: Style {
+                    width: Val::Px(MAIN_BOARD_WIDTH),
+                    height: Val::Px(MAIN_BOARD_HEIGHT),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
+                    ..default()
+                },
+                background_color: BackgroundColor(BOARD_COLOR_0),
+                ..default()
+            },
+        };
+    }
+}
+
+impl MenuBoxBundle {
+    fn child_builder(font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
+        return move |parent| {
+            let button_style = Style {
+                width: Val::Px(todo!()),
+                ..default()
+            };
+            parent.spawn(TextBundle::from_section(
+                "2048.rs",
+                TextStyle {
+                    font: font.clone(),
+                    font_size: TITLE_FONT_SIZE,
+                    color: TITLE_TEXT_COLOR,
+                    ..default()
+                },
+            ));
+        };
+    }
+}
+
 pub fn create_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let font = asset_server.load("fonts/Kenney Space.ttf");
+    let font = asset_server.load(MAIN_FONT_NAME);
     commands
         .spawn(MainMenuScreenBundle::default())
         .with_children(MainMenuScreenBundle::child_builder(font));

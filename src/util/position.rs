@@ -3,10 +3,8 @@ use bevy::ecs::system::{Query, QueryLens};
 use itertools::iproduct;
 use std::collections::BTreeSet;
 
-use crate::components::position::Position;
-use crate::components::tile::Tile;
-use crate::constants::GRID_HEIGHT;
-use crate::constants::GRID_WIDTH;
+use crate::components::{position::Position, tile::Tile};
+use crate::constants::layout::{GRID_HEIGHT, GRID_WIDTH};
 
 fn get_positions_set(mut lens: QueryLens<&Position>) -> BTreeSet<Position> {
     let query: Query<'_, '_, &Position> = lens.query();

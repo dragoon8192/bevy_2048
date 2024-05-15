@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 use std::fmt::Debug;
 
 use super::quater_turn::QuarterTurn;
-use crate::constants::{GRID_HEIGHT, GRID_WIDTH};
+use crate::constants::layout::{GRID_HEIGHT, GRID_WIDTH};
 
 // grid : GridArray<T> は [0][0] から [GRID_WIDTH - 1][GRID_HEIGHT - 1] までの成分を持つ
 pub struct GridArray<T>(pub [[T; GRID_HEIGHT]; GRID_WIDTH]);

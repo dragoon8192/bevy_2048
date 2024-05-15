@@ -1,8 +1,11 @@
 use crate::{
     components::{main_board::MainBoard, position::Position},
     constants::{
-        BOARD_COLOR_0, BOARD_COLOR_1, GRID_HEIGHT, GRID_WIDTH, MAIN_AND_SCORE_BOARD_MARGIN,
-        MAIN_BOARD_SIZE_2D, SCORE_BOARD_HEIGHT, TILE_SIZE_2D,
+        color::{BOARD_COLOR_0, BOARD_COLOR_1},
+        layout::{
+            GRID_HEIGHT, GRID_WIDTH, MAIN_AND_SCORE_BOARD_MARGIN, MAIN_BOARD_SIZE_2D,
+            SCORE_BOARD_HEIGHT, TILE_SIZE_2D,
+        },
     },
 };
 use bevy::prelude::*;

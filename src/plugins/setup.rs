@@ -4,7 +4,7 @@ use crate::{
     bundle::{
         main_board::create_main_board, score_board::create_score_board, tile::TileSpawnEvent,
     },
-    constants::BACKGROUND_COLOR,
+    constants::color::BACKGROUND_COLOR,
     resources::score::Score,
     states::game_state::GameState,
 };

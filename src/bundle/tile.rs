@@ -2,9 +2,10 @@ use bevy::prelude::*;
 use bevy::text::{Text, Text2dBounds};
 
 use crate::components::main_board::MainBoard;
+use crate::constants::font::MAIN_FONT_NAME;
 use crate::{
     components::{position::Position, tile::Tile},
-    constants::{TILE_FONT_SIZE, TILE_SIZE_2D, TILE_TEXT_COLOR},
+    constants::{color::TILE_TEXT_COLOR, font::TILE_FONT_SIZE, layout::TILE_SIZE_2D},
 };
 
 // // 盤面の状態の取得
@@ -90,7 +91,7 @@ pub fn spawn_tiles(
     asset_server: Res<AssetServer>,
 ) {
     for ev in tile_spawn_evr.read() {
-        let font = asset_server.load("fonts/Kenney Space.ttf");
+        let font = asset_server.load(MAIN_FONT_NAME);
         let tile_bundle = TileBundle::new(ev.tile, ev.position);
         let child = commands
             .spawn(tile_bundle.clone())

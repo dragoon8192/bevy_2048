@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::constants::{
+use crate::constants::layout::{
     GRID_HEIGHT, GRID_WIDTH, TILE_HEIGHT, TILE_MARGIN_HORIZONTAL, TILE_MARGIN_VERTICAL, TILE_WIDTH,
 };
 

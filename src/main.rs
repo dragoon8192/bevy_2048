@@ -13,7 +13,7 @@ mod states;
 mod structs;
 mod util;
 
-use constants::{WINDOW_HEIGHT, WINDOW_WIDTH};
+use constants::layout::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use plugins::game_plugin_group::GamePluginGroup;
 
 fn main() {
