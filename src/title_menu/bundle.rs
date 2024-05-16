@@ -1,10 +1,9 @@
 use bevy::prelude::*;
 use strum::IntoEnumIterator;
 
-use super::component;
+use super::{component, constant};
 use crate::constants::{
     color::{BOARD_COLOR_0, BOARD_COLOR_1, MENU_TEXT_COLOR, TITLE_TEXT_COLOR},
-    font::{MENU_FONT_SIZE, TITLE_FONT_SIZE},
     layout::{
         MAIN_BOARD_HEIGHT, MAIN_BOARD_WIDTH, MENU_BUTTON_BORDER, MENU_BUTTON_HEIGHT,
         MENU_BUTTON_WIDTH, SCORE_BOARD_HEIGHT, WINDOW_HEIGHT, WINDOW_WIDTH,
@@ -79,7 +78,7 @@ impl Title {
                 "2048.rs",
                 TextStyle {
                     font: font.clone(),
-                    font_size: TITLE_FONT_SIZE,
+                    font_size: constant::font::TITLE_SIZE,
                     color: TITLE_TEXT_COLOR,
                 },
             ));
@@ -169,7 +168,7 @@ impl MenuButton {
                 TextStyle {
                     font,
                     color: MENU_TEXT_COLOR,
-                    font_size: MENU_FONT_SIZE,
+                    font_size: constant::font::MENU_SIZE,
                 },
             ));
         };
