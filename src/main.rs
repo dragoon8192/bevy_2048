@@ -11,6 +11,7 @@ mod plugins;
 mod resources;
 mod states;
 mod structs;
+mod title_menu;
 mod util;
 
 use constants::layout::{WINDOW_HEIGHT, WINDOW_WIDTH};

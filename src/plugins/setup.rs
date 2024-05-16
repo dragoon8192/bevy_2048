@@ -22,7 +22,7 @@ impl Plugin for SetupPlugin {
                     setup,
                     create_main_board,
                     create_score_board,
-                    GameState::MainMenu.set_next(),
+                    GameState::TitleMenu.set_next(),
                 ),
             )
             .add_systems(Update, bevy::window::close_on_esc);
