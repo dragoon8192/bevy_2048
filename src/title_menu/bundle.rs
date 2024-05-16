@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use strum::IntoEnumIterator;
 
 use crate::{
-    components::{main_menu::MainMenuScreen, menu_button_action::MenuButtonAction},
+    components::title_menu,
     constants::{
         color::{BOARD_COLOR_0, BOARD_COLOR_1, MENU_TEXT_COLOR, TITLE_TEXT_COLOR},
         font::{MAIN_FONT_NAME, MENU_FONT_SIZE, TITLE_FONT_SIZE},
@@ -14,15 +14,15 @@ use crate::{
 };
 
 #[derive(Bundle)]
-struct MainMenuScreenBundle {
-    marker: MainMenuScreen,
+struct ScreenBundle {
+    marker: title_menu::Screen,
     node_bundle: NodeBundle,
 }
 
-impl Default for MainMenuScreenBundle {
+impl Default for ScreenBundle {
     fn default() -> Self {
         return Self {
-            marker: MainMenuScreen,
+            marker: title_menu::Screen,
             node_bundle: NodeBundle {
                 style: Style {
                     width: Val::Px(WINDOW_WIDTH),
@@ -38,13 +38,13 @@ impl Default for MainMenuScreenBundle {
     }
 }
 
-impl MainMenuScreenBundle {
+impl ScreenBundle {
     fn child_builder(font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         return move |parent| {
-            let title_box = TitleBoxBundle::default();
+            let title_box = TitleBundle::default();
             let title_child = title_box.child_builder(font.clone());
             parent.spawn(title_box).with_children(title_child);
-            let menu_box = MenuBoxBundle::default();
+            let menu_box = MenuBundle::default();
             let menu_child = menu_box.child_builder(font.clone());
             parent.spawn(menu_box).with_children(menu_child);
         };
@@ -52,11 +52,11 @@ impl MainMenuScreenBundle {
 }
 
 #[derive(Bundle)]
-struct TitleBoxBundle {
+struct TitleBundle {
     node: NodeBundle,
 }
 
-impl Default for TitleBoxBundle {
+impl Default for TitleBundle {
     fn default() -> Self {
         return Self {
             node: NodeBundle {
@@ -74,7 +74,7 @@ impl Default for TitleBoxBundle {
     }
 }
 
-impl TitleBoxBundle {
+impl TitleBundle {
     fn child_builder(&self, font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         return move |parent| {
             parent.spawn(TextBundle::from_section(
@@ -90,11 +90,11 @@ impl TitleBoxBundle {
 }
 
 #[derive(Bundle)]
-struct MenuBoxBundle {
+struct MenuBundle {
     node: NodeBundle,
 }
 
-impl Default for MenuBoxBundle {
+impl Default for MenuBundle {
     fn default() -> Self {
         return Self {
             node: NodeBundle {
@@ -113,10 +113,10 @@ impl Default for MenuBoxBundle {
     }
 }
 
-impl MenuBoxBundle {
+impl MenuBundle {
     fn child_builder(&self, font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         return move |parent| {
-            for action in MenuButtonAction::iter() {
+            for action in title_menu::ButtonAction::iter() {
                 let button = MenuButtonBundle::new(action);
                 let child_builder = button.child_builder(font.clone());
                 parent.spawn(button).with_children(child_builder);
@@ -178,13 +178,16 @@ impl MenuButtonBundle {
     }
 }
 
-pub fn create_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn create_title_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font = asset_server.load(MAIN_FONT_NAME);
     commands
-        .spawn(MainMenuScreenBundle::default())
-        .with_children(MainMenuScreenBundle::child_builder(font));
+        .spawn(ScreenBundle::default())
+        .with_children(ScreenBundle::child_builder(font));
 }
 
-pub fn remove_main_menu_screen(query: Query<Entity, With<MainMenuScreen>>, mut commands: Commands) {
+pub fn remove_main_menu_screen(
+    query: Query<Entity, With<TitleMenuScreen>>,
+    mut commands: Commands,
+) {
     commands.entity(query.single()).despawn_recursive();
 }

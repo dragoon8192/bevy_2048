@@ -1,6 +1,4 @@
 pub mod main_board;
-pub mod main_menu;
-pub mod menu_button_action;
 pub mod position;
 pub mod score_board;
 pub mod score_text;
