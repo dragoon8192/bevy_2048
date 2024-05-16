@@ -2,6 +2,7 @@ use bevy::render::color::Color;
 
 pub const BACKGROUND_COLOR: Color = Color::GRAY;
 pub const TITLE_TEXT_COLOR: Color = Color::GRAY;
+pub const MENU_TEXT_COLOR: Color = Color::GRAY;
 
 pub const SCORE_TEXT_COLOR: Color = Color::GRAY;
 

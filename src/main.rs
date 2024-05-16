@@ -17,6 +17,7 @@ use constants::layout::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use plugins::game_plugin_group::GamePluginGroup;
 
 fn main() {
+    dbg!((WINDOW_WIDTH, WINDOW_HEIGHT));
     let window = Window {
         title: "2048".to_string(),
         resolution: (WINDOW_WIDTH, WINDOW_HEIGHT).into(),
