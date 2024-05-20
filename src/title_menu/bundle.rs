@@ -1,14 +1,12 @@
 use bevy::prelude::*;
 use strum::IntoEnumIterator;
 
-use super::{component, constant};
-use crate::constants::{
-    color::{BOARD_COLOR_0, BOARD_COLOR_1, MENU_TEXT_COLOR, TITLE_TEXT_COLOR},
-    layout::{
-        MAIN_BOARD_HEIGHT, MAIN_BOARD_WIDTH, MENU_BUTTON_BORDER, MENU_BUTTON_HEIGHT,
-        MENU_BUTTON_WIDTH, SCORE_BOARD_HEIGHT, WINDOW_HEIGHT, WINDOW_WIDTH,
-    },
+use super::{
+    component,
+    constant::{color, font, layout},
 };
+use crate::constants::color::{BOARD_COLOR_0, BOARD_COLOR_1};
+use crate::constants::layout as global_layout;
 
 #[derive(Bundle)]
 pub struct Screen {
@@ -22,8 +20,8 @@ impl Default for Screen {
             marker: component::Screen,
             node_bundle: NodeBundle {
                 style: Style {
-                    width: Val::Px(WINDOW_WIDTH),
-                    height: Val::Px(WINDOW_HEIGHT),
+                    width: Val::Px(global_layout::WINDOW_WIDTH),
+                    height: Val::Px(global_layout::WINDOW_HEIGHT),
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceBetween,
@@ -58,8 +56,8 @@ impl Default for Title {
         return Self {
             node: NodeBundle {
                 style: Style {
-                    width: Val::Px(MAIN_BOARD_WIDTH),
-                    height: Val::Px(SCORE_BOARD_HEIGHT),
+                    width: Val::Px(layout::TITLE_WIDTH),
+                    height: Val::Px(layout::TITLE_HEIGHT),
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::Center,
                     ..default()
@@ -78,8 +76,8 @@ impl Title {
                 "2048.rs",
                 TextStyle {
                     font: font.clone(),
-                    font_size: constant::font::TITLE_SIZE,
-                    color: TITLE_TEXT_COLOR,
+                    font_size: font::TITLE_SIZE,
+                    color: color::TITLE_TEXT,
                 },
             ));
         };
@@ -96,8 +94,8 @@ impl Default for MenuBox {
         return Self {
             node: NodeBundle {
                 style: Style {
-                    width: Val::Px(MAIN_BOARD_WIDTH),
-                    height: Val::Px(MAIN_BOARD_HEIGHT),
+                    width: Val::Px(layout::MENU_WIDTH),
+                    height: Val::Px(layout::MENU_HEIGHT),
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceAround,
@@ -134,11 +132,11 @@ impl Default for MenuButton {
             action: component::ButtonAction::GameStart,
             button: ButtonBundle {
                 style: Style {
-                    width: Val::Px(MENU_BUTTON_WIDTH),
-                    height: Val::Px(MENU_BUTTON_HEIGHT),
+                    width: Val::Px(layout::BUTTON_WIDTH),
+                    height: Val::Px(layout::BUTTON_HEIGHT),
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
-                    border: UiRect::all(Val::Px(MENU_BUTTON_BORDER)),
+                    border: UiRect::all(Val::Px(layout::BUTTON_BORDER)),
                     ..default()
                 },
                 background_color: BOARD_COLOR_0.into(),
@@ -167,8 +165,8 @@ impl MenuButton {
                 val,
                 TextStyle {
                     font,
-                    color: MENU_TEXT_COLOR,
-                    font_size: constant::font::MENU_SIZE,
+                    color: color::MENU_TEXT,
+                    font_size: font::MENU_SIZE,
                 },
             ));
         };

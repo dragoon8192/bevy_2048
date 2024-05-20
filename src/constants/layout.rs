@@ -21,11 +21,6 @@ pub const MAIN_BOARD_HEIGHT: f32 = TILE_HEIGHT * GRID_HEIGHT as f32
 pub const MAIN_BOARD_SIZE_2D: Vec2 = Vec2::new(MAIN_BOARD_WIDTH, MAIN_BOARD_HEIGHT);
 pub const MAIN_BOARD_PADDING: f32 = 18.0;
 
-// TitleMenu
-pub const MENU_BUTTON_WIDTH: f32 = 250.0;
-pub const MENU_BUTTON_HEIGHT: f32 = 72.0;
-pub const MENU_BUTTON_BORDER: f32 = 8.0;
-
 // Tile
 pub const TILE_WIDTH: f32 = 60.0;
 pub const TILE_HEIGHT: f32 = 60.0;
