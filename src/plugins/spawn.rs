@@ -7,7 +7,7 @@ use std::collections::BTreeSet;
 use crate::bundle::tile::{spawn_tiles, TileSpawnEvent};
 use crate::components::position::Position;
 use crate::components::tile::Tile;
-use crate::states::game_state::GameState;
+use crate::state;
 use crate::util::position::{board_is_full, get_positions_complement_set};
 
 pub struct SpawnPlugin;
@@ -15,12 +15,18 @@ pub struct SpawnPlugin;
 impl Plugin for SpawnPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
-            OnEnter(GameState::Spawn),
+            OnEnter(state::App::Game(state::Game::Spawn)),
             (
-                (create_random_tile, spawn_tiles, GameState::Input.set_next())
+                (
+                    create_random_tile,
+                    spawn_tiles,
+                    state::App::Game(state::Game::Input).set_next(),
+                )
                     .chain()
                     .run_if(not(board_is_full)),
-                GameState::GameOver.set_next().run_if(board_is_full),
+                state::App::Game(state::Game::GameOver)
+                    .set_next()
+                    .run_if(board_is_full),
             ),
         );
     }

@@ -6,7 +6,7 @@ use crate::{
     },
     constants::color::BACKGROUND_COLOR,
     resources::score::Score,
-    states::game_state::GameState,
+    state,
 };
 
 pub struct SetupPlugin;
@@ -14,7 +14,7 @@ pub struct SetupPlugin;
 impl Plugin for SetupPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.insert_resource(ClearColor(BACKGROUND_COLOR))
-            .init_state::<GameState>()
+            .init_state::<state::App>()
             .add_event::<TileSpawnEvent>()
             .add_systems(
                 Startup,
@@ -22,7 +22,7 @@ impl Plugin for SetupPlugin {
                     setup,
                     create_main_board,
                     create_score_board,
-                    GameState::TitleMenu.set_next(),
+                    state::App::TitleMenu.set_next(),
                 ),
             )
             .add_systems(Update, bevy::window::close_on_esc);

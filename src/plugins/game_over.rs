@@ -3,13 +3,13 @@ use bevy::{
     ecs::{event::EventWriter, schedule::OnEnter},
 };
 
-use crate::states::game_state::GameState;
+use crate::state;
 
 pub struct GameOverPlugin;
 
 impl Plugin for GameOverPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_systems(OnEnter(GameState::GameOver), end_game);
+        app.add_systems(OnEnter(state::App::Game(state::Game::GameOver)), end_game);
     }
 }
 

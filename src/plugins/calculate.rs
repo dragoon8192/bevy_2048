@@ -8,7 +8,7 @@ use crate::components::position::Position;
 use crate::components::tile::Tile;
 use crate::error::handle_query_entity_errors;
 use crate::plugins::input::PlayerInputEvent;
-use crate::states::game_state::GameState;
+use crate::state;
 use crate::structs::grid_array::{GridArray, RotatedGridArray};
 use crate::structs::quater_turn::QuarterTurn;
 
@@ -19,11 +19,11 @@ impl Plugin for CalculatePlugin {
         app.add_event::<SlicedMovementEvent>()
             .add_event::<TileMovementEvent>()
             .add_systems(
-                OnEnter(GameState::Calculate),
+                OnEnter(state::App::Game(state::Game::Calculate)),
                 (
                     handle_player_input,
                     calc_sliced_movement.pipe(handle_query_entity_errors),
-                    GameState::Movement.set_next(),
+                    state::App::Game(state::Game::Movement).set_next(),
                 )
                     .chain(),
             );

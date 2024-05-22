@@ -4,9 +4,16 @@ use bevy::ecs::{
 };
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
-pub enum GameState {
+pub enum App {
     #[default]
     TitleMenu,
+    ScoreBoard,
+    Game(Game),
+}
+
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+pub enum Game {
+    #[default]
     Spawn,
     Input,
     Calculate,
@@ -14,9 +21,9 @@ pub enum GameState {
     GameOver,
 }
 
-impl GameState {
-    pub fn set_next(self) -> impl FnMut(ResMut<NextState<GameState>>) {
-        return move |mut next: ResMut<NextState<GameState>>| {
+impl App {
+    pub fn set_next(self) -> impl FnMut(ResMut<NextState<App>>) {
+        return move |mut next: ResMut<NextState<App>>| {
             dbg!(self);
             next.set(self);
         };

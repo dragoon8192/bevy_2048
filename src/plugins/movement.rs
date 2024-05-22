@@ -5,19 +5,19 @@ use crate::{
     error::handle_query_entity_errors,
     plugins::calculate::TileMovementEvent,
     resources::score::Score,
-    states::game_state::GameState,
+    state,
 };
 
 pub struct MovementPlugin;
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
-            OnEnter(GameState::Movement),
+            OnEnter(state::App::Game(state::Game::Movement)),
             (
                 move_tiles.pipe(handle_query_entity_errors),
                 update_tiles.pipe(handle_query_entity_errors),
                 update_score.pipe(handle_query_entity_errors),
-                GameState::Spawn.set_next(),
+                state::App::Game(state::Game::Spawn).set_next(),
             )
                 .chain(),
         );
