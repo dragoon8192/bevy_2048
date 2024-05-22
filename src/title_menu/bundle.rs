@@ -5,7 +5,6 @@ use super::{
     component,
     constant::{color, font, layout},
 };
-use crate::constants::color::{BOARD_COLOR_0, BOARD_COLOR_1};
 use crate::constants::layout as global_layout;
 
 #[derive(Bundle)]
@@ -62,7 +61,7 @@ impl Default for Title {
                     justify_content: JustifyContent::Center,
                     ..default()
                 },
-                background_color: BackgroundColor(BOARD_COLOR_0),
+                background_color: BackgroundColor(color::MAIN),
                 ..default()
             },
         };
@@ -101,7 +100,7 @@ impl Default for MenuBox {
                     justify_content: JustifyContent::SpaceAround,
                     ..default()
                 },
-                background_color: BackgroundColor(BOARD_COLOR_0),
+                background_color: BackgroundColor(color::MAIN),
                 ..default()
             },
         };
@@ -139,8 +138,8 @@ impl Default for MenuButton {
                     border: UiRect::all(Val::Px(layout::BUTTON_BORDER)),
                     ..default()
                 },
-                background_color: BOARD_COLOR_0.into(),
-                border_color: BOARD_COLOR_1.into(),
+                background_color: color::MAIN.into(),
+                border_color: color::BORDER.into(),
                 ..default()
             },
         };
