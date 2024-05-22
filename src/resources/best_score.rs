@@ -1,23 +1,21 @@
+use crate::score_board::constant::SCORE_BOARD_NUM;
 use bevy::prelude::*;
 
 #[derive(Resource)]
-pub struct BestScore(usize);
+pub struct BestScores(Vec<usize>);
 
-impl BestScore {
-    pub fn update(&mut self, post: usize) {
-        let pre = self.0;
-        *self = BestScore(pre.max(post));
+impl BestScores {
+    pub fn update(&mut self, score: usize) {
+        let vec: &mut Vec<usize> = &mut self.0;
+        vec.push(score);
+        vec.sort();
+        vec.reverse();
+        vec.resize(SCORE_BOARD_NUM, 0);
     }
 }
 
-impl Default for BestScore {
+impl Default for BestScores {
     fn default() -> Self {
-        return Self(0);
-    }
-}
-
-impl ToString for BestScore {
-    fn to_string(&self) -> String {
-        return self.0.to_string();
+        return Self(vec![0; SCORE_BOARD_NUM]);
     }
 }

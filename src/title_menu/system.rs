@@ -21,7 +21,9 @@ pub fn menu_action(
                 component::ButtonAction::GameStart => {
                     game_state.set(state::App::Game(state::Game::Spawn));
                 }
-                component::ButtonAction::ScoreBoard => {}
+                component::ButtonAction::ScoreBoard => {
+                    game_state.set(state::App::ScoreBoard);
+                }
                 component::ButtonAction::Quit => {
                     exit.send(AppExit);
                 }

@@ -9,6 +9,7 @@ mod constants;
 mod error;
 mod plugins;
 mod resources;
+mod score_board;
 mod state;
 mod structs;
 mod title_menu;
