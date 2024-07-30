@@ -5,7 +5,7 @@ use bevy_rand::plugin::EntropyPlugin;
 
 mod bundle;
 mod components;
-mod constants;
+mod constant;
 mod error;
 mod plugins;
 mod resources;

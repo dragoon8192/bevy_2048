@@ -1,11 +1,10 @@
-use crate::constants::color;
-use bevy::render::color::Color;
+use crate::constants::color::{self, Color};
 
-pub const MAIN: Color = color::BOARD_COLOR_0;
-pub const BORDER: Color = color::BOARD_COLOR_1;
+pub const MAIN: Color = color::board::MAIN;
+pub const BORDER: Color = color::board::SUB;
 
 pub mod text {
-    use bevy::render::color::Color;
-    pub const HEADER: Color = Color::GRAY;
-    pub const BODY: Color = Color::GRAY;
+    use crate::constants::color::{self, Color};
+    pub const HEADER: Color = color::board::TEXT;
+    pub const BODY: Color = color::board::TEXT;
 }
