@@ -69,8 +69,8 @@ impl Header {
                 "2048.rs",
                 TextStyle {
                     font: font.clone(),
-                    font_size: font::size::TITLE,
-                    color: font::color::TITLE,
+                    font_size: font::size::HEADER,
+                    color: color::text::HEADER,
                 },
             ));
         };
