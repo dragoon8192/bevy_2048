@@ -15,7 +15,7 @@ mod structs;
 mod title_menu;
 mod util;
 
-use constants::layout::{WINDOW_HEIGHT, WINDOW_WIDTH};
+use constant::layout::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use plugins::game_plugin_group::GamePluginGroup;
 
 fn main() {

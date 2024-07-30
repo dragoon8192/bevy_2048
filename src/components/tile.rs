@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::constants::color::{TILE_COLOR_0, TILE_COLOR_1};
+use crate::constant::color;
 
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
 pub struct Tile(pub u8);
@@ -18,7 +18,7 @@ impl From<Tile> for Color {
     fn from(Tile(rank): Tile) -> Self {
         // rank = 1 -> r = 0.0, rank >= 11 -> r = 1.0
         let r: f32 = (rank - 1) as f32 / 10.0;
-        return TILE_COLOR_0 * (1.0 - r) + TILE_COLOR_1 * r;
+        return color::tile::MAIN * (1.0 - r) + color::tile::SUB * r;
     }
 }
 

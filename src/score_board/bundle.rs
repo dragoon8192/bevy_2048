@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use super::constant::{color, font, layout};
-use crate::constants::layout as global_layout;
+use crate::constant::layout as global_layout;
 
 #[derive(Bundle)]
 pub struct Screen {

@@ -2,14 +2,14 @@ use std::collections::VecDeque;
 use std::fmt::Debug;
 
 use super::quater_turn::QuarterTurn;
-use crate::constants::layout::{GRID_HEIGHT, GRID_WIDTH};
+use crate::constant::layout;
 
 // grid : GridArray<T> は [0][0] から [GRID_WIDTH - 1][GRID_HEIGHT - 1] までの成分を持つ
-pub struct GridArray<T>(pub [[T; GRID_HEIGHT]; GRID_WIDTH]);
+pub struct GridArray<T>(pub [[T; layout::GRID_HEIGHT]; layout::GRID_WIDTH]);
 
 impl<T: Copy> GridArray<T> {
     pub fn new(a: T) -> Self {
-        return GridArray([[a; GRID_HEIGHT]; GRID_WIDTH]);
+        return GridArray([[a; layout::GRID_HEIGHT]; layout::GRID_WIDTH]);
     }
 }
 
@@ -39,14 +39,14 @@ impl<T> RotatedGridArray<T> {
     }
     pub fn width(&self) -> usize {
         match self.turn {
-            QuarterTurn::Deg000 | QuarterTurn::Deg180 => return GRID_WIDTH,
-            QuarterTurn::Deg090 | QuarterTurn::Deg270 => return GRID_HEIGHT,
+            QuarterTurn::Deg000 | QuarterTurn::Deg180 => return layout::GRID_WIDTH,
+            QuarterTurn::Deg090 | QuarterTurn::Deg270 => return layout::GRID_HEIGHT,
         }
     }
     pub fn height(&self) -> usize {
         match self.turn {
-            QuarterTurn::Deg000 | QuarterTurn::Deg180 => return GRID_HEIGHT,
-            QuarterTurn::Deg090 | QuarterTurn::Deg270 => return GRID_WIDTH,
+            QuarterTurn::Deg000 | QuarterTurn::Deg180 => return layout::GRID_HEIGHT,
+            QuarterTurn::Deg090 | QuarterTurn::Deg270 => return layout::GRID_WIDTH,
         }
     }
     fn get(&self, i: usize, j: usize) -> Option<&T> {
@@ -54,13 +54,15 @@ impl<T> RotatedGridArray<T> {
             self.grid_array
                 .0
                 .get(i)
-                .and_then(|y_axis: &[T; GRID_HEIGHT]| (*y_axis).get(j))
+                .and_then(|y_axis: &[T; layout::GRID_HEIGHT]| (*y_axis).get(j))
         };
         match self.turn {
             QuarterTurn::Deg000 => return get2(i, j),
-            QuarterTurn::Deg090 => return get2(j, GRID_HEIGHT - 1 - i),
-            QuarterTurn::Deg180 => return get2(GRID_WIDTH - 1 - i, GRID_HEIGHT - 1 - j),
-            QuarterTurn::Deg270 => return get2(GRID_WIDTH - 1 - j, i),
+            QuarterTurn::Deg090 => return get2(j, layout::GRID_HEIGHT - 1 - i),
+            QuarterTurn::Deg180 => {
+                return get2(layout::GRID_WIDTH - 1 - i, layout::GRID_HEIGHT - 1 - j)
+            }
+            QuarterTurn::Deg270 => return get2(layout::GRID_WIDTH - 1 - j, i),
         }
     }
 }

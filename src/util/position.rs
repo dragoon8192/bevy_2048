@@ -4,7 +4,7 @@ use itertools::iproduct;
 use std::collections::BTreeSet;
 
 use crate::components::{position::Position, tile::Tile};
-use crate::constants::layout::{GRID_HEIGHT, GRID_WIDTH};
+use crate::constant::layout::{GRID_HEIGHT, GRID_WIDTH};
 
 fn get_positions_set(mut lens: QueryLens<&Position>) -> BTreeSet<Position> {
     let query: Query<'_, '_, &Position> = lens.query();

@@ -3,9 +3,8 @@ use bevy::prelude::*;
 use crate::{
     components::score_board::ScoreBoard,
     components::score_text::ScoreText,
-    constants::{
-        color::{BOARD_COLOR_0, SCORE_TEXT_COLOR},
-        font::SCORE_FONT_SIZE,
+    constant::{
+        color, font,
         layout::{MAIN_BOARD_WIDTH, SCORE_BOARD_HEIGHT},
     },
 };
@@ -38,7 +37,7 @@ impl Default for ScoreBoardBundle {
                     left: Val::Px(0.0),
                     ..default()
                 },
-                background_color: BackgroundColor(BOARD_COLOR_0),
+                background_color: BackgroundColor(color::board::MAIN),
                 ..default()
             },
         };
@@ -49,8 +48,8 @@ impl ScoreBoardBundle {
     fn child_builder(font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         let style = TextStyle {
             font: font.clone(),
-            font_size: SCORE_FONT_SIZE,
-            color: SCORE_TEXT_COLOR,
+            font_size: font::size::SUB,
+            color: color::text::MAIN,
             ..default()
         };
         return move |parent| {

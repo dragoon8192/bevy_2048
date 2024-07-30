@@ -1,14 +1,14 @@
 use crate::{
     components::{main_board::MainBoard, position::Position},
-    constants::{
-        color::{BOARD_COLOR_0, BOARD_COLOR_1},
+    constant::{
+        color,
         layout::{
             GRID_HEIGHT, GRID_WIDTH, MAIN_AND_SCORE_BOARD_MARGIN, MAIN_BOARD_SIZE_2D,
             SCORE_BOARD_HEIGHT, TILE_SIZE_2D,
         },
     },
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, render::color::Color};
 use itertools::iproduct;
 
 // 背景の大きな盤
@@ -24,7 +24,7 @@ impl Default for MainBoardBundle {
             marker: MainBoard,
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
-                    color: BOARD_COLOR_0,
+                    color: color::board::MAIN,
                     custom_size: Some(MAIN_BOARD_SIZE_2D),
                     ..default()
                 },
@@ -58,7 +58,7 @@ impl Default for MainBoardTileBundle {
         return Self {
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
-                    color: BOARD_COLOR_1,
+                    color: color::board::MAIN,
                     custom_size: Some(TILE_SIZE_2D),
                     ..default()
                 },
