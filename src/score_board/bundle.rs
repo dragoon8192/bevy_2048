@@ -49,8 +49,8 @@ impl Default for Header {
         return Self {
             node: NodeBundle {
                 style: Style {
-                    width: Val::Px(layout::TITLE_WIDTH),
-                    height: Val::Px(layout::TITLE_HEIGHT),
+                    width: Val::Px(layout::header::WIDTH),
+                    height: Val::Px(layout::header::HEIGHT),
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::Center,
                     ..default()

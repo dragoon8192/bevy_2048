@@ -8,7 +8,7 @@ use crate::{
         },
     },
 };
-use bevy::{prelude::*, render::color::Color};
+use bevy::prelude::*;
 use itertools::iproduct;
 
 // 背景の大きな盤

@@ -35,28 +35,28 @@ impl Default for Screen {
 impl Screen {
     pub fn child_builder(font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         return move |parent| {
-            let title_box = Title::default();
-            let title_child = title_box.child_builder(font.clone());
-            parent.spawn(title_box).with_children(title_child);
-            let menu_box = MenuBox::default();
-            let menu_child = menu_box.child_builder(font.clone());
-            parent.spawn(menu_box).with_children(menu_child);
+            let header_box = Header::default();
+            let header_child = header_box.child_builder(font.clone());
+            parent.spawn(header_box).with_children(header_child);
+            let body_box = BodyBox::default();
+            let body_child = body_box.child_builder(font.clone());
+            parent.spawn(body_box).with_children(body_child);
         };
     }
 }
 
 #[derive(Bundle)]
-struct Title {
+struct Header {
     node: NodeBundle,
 }
 
-impl Default for Title {
+impl Default for Header {
     fn default() -> Self {
         return Self {
             node: NodeBundle {
                 style: Style {
-                    width: Val::Px(layout::TITLE_WIDTH),
-                    height: Val::Px(layout::TITLE_HEIGHT),
+                    width: Val::Px(layout::header::WIDTH),
+                    height: Val::Px(layout::header::HEIGHT),
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::Center,
                     ..default()
@@ -68,15 +68,15 @@ impl Default for Title {
     }
 }
 
-impl Title {
+impl Header {
     fn child_builder(&self, font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         return move |parent| {
             parent.spawn(TextBundle::from_section(
                 "2048.rs",
                 TextStyle {
                     font: font.clone(),
-                    font_size: font::TITLE_SIZE,
-                    color: color::TITLE_TEXT,
+                    font_size: font::size::HEADER,
+                    color: color::text::HEADER,
                 },
             ));
         };
@@ -84,17 +84,17 @@ impl Title {
 }
 
 #[derive(Bundle)]
-struct MenuBox {
+struct BodyBox {
     node: NodeBundle,
 }
 
-impl Default for MenuBox {
+impl Default for BodyBox {
     fn default() -> Self {
         return Self {
             node: NodeBundle {
                 style: Style {
-                    width: Val::Px(layout::MENU_WIDTH),
-                    height: Val::Px(layout::MENU_HEIGHT),
+                    width: Val::Px(layout::body::WIDTH),
+                    height: Val::Px(layout::body::HEIGHT),
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceAround,
@@ -107,11 +107,11 @@ impl Default for MenuBox {
     }
 }
 
-impl MenuBox {
+impl BodyBox {
     fn child_builder(&self, font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         return move |parent| {
             for action in component::ButtonAction::iter() {
-                let button = MenuButton::new(action);
+                let button = BodyButton::new(action);
                 let child_builder = button.child_builder(font.clone());
                 parent.spawn(button).with_children(child_builder);
             }
@@ -120,22 +120,22 @@ impl MenuBox {
 }
 
 #[derive(Bundle)]
-struct MenuButton {
+struct BodyButton {
     action: component::ButtonAction,
     button: ButtonBundle,
 }
 
-impl Default for MenuButton {
+impl Default for BodyButton {
     fn default() -> Self {
         return Self {
             action: component::ButtonAction::GameStart,
             button: ButtonBundle {
                 style: Style {
-                    width: Val::Px(layout::BUTTON_WIDTH),
-                    height: Val::Px(layout::BUTTON_HEIGHT),
+                    width: Val::Px(layout::button::WIDTH),
+                    height: Val::Px(layout::button::HEIGHT),
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
-                    border: UiRect::all(Val::Px(layout::BUTTON_BORDER)),
+                    border: UiRect::all(Val::Px(layout::button::BORDER)),
                     ..default()
                 },
                 background_color: color::MAIN.into(),
@@ -146,7 +146,7 @@ impl Default for MenuButton {
     }
 }
 
-impl MenuButton {
+impl BodyButton {
     fn new(action: component::ButtonAction) -> Self {
         return Self {
             action,
@@ -164,8 +164,8 @@ impl MenuButton {
                 val,
                 TextStyle {
                     font,
-                    color: color::MENU_TEXT,
-                    font_size: font::MENU_SIZE,
+                    color: color::text::BODY,
+                    font_size: font::size::BODY,
                 },
             ));
         };
