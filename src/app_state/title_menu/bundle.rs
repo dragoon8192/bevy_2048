@@ -5,7 +5,6 @@ use super::{
     component,
     constant::{color, font, layout},
 };
-use crate::constant::layout as global_layout;
 
 #[derive(Bundle)]
 pub struct Screen {
@@ -19,8 +18,8 @@ impl Default for Screen {
             marker: component::Screen,
             node_bundle: NodeBundle {
                 style: Style {
-                    width: Val::Px(global_layout::WINDOW_WIDTH),
-                    height: Val::Px(global_layout::WINDOW_HEIGHT),
+                    width: Val::Px(layout::WINDOW.width),
+                    height: Val::Px(layout::WINDOW.height),
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceBetween,
@@ -55,8 +54,8 @@ impl Default for Header {
         return Self {
             node: NodeBundle {
                 style: Style {
-                    width: Val::Px(layout::header::WIDTH),
-                    height: Val::Px(layout::header::HEIGHT),
+                    width: Val::Px(layout::HEADER.width),
+                    height: Val::Px(layout::HEADER.height),
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::Center,
                     ..default()
@@ -93,8 +92,8 @@ impl Default for BodyBox {
         return Self {
             node: NodeBundle {
                 style: Style {
-                    width: Val::Px(layout::body::WIDTH),
-                    height: Val::Px(layout::body::HEIGHT),
+                    width: Val::Px(layout::BODY.width),
+                    height: Val::Px(layout::BODY.height),
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceAround,
@@ -131,11 +130,11 @@ impl Default for BodyButton {
             action: component::ButtonAction::GameStart,
             button: ButtonBundle {
                 style: Style {
-                    width: Val::Px(layout::button::WIDTH),
-                    height: Val::Px(layout::button::HEIGHT),
+                    width: Val::Px(layout::BUTTON.width),
+                    height: Val::Px(layout::BUTTON.height),
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
-                    border: UiRect::all(Val::Px(layout::button::BORDER)),
+                    border: UiRect::all(Val::Px(layout::BUTTON.border)),
                     ..default()
                 },
                 background_color: color::MAIN.into(),

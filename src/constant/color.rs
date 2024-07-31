@@ -1,12 +1,10 @@
 pub use bevy::render::color::Color;
 
-pub const BACKGROUND: Color = Color::GRAY;
-
 pub mod text {
     use bevy::render::color::Color;
     pub const MAIN: Color = Color::GRAY;
 }
-pub mod board {
+pub mod background {
     use bevy::render::color::Color;
     pub const MAIN: Color = Color::BEIGE;
     pub const SUB: Color = Color::GRAY;

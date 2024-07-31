@@ -4,25 +4,18 @@ use bevy_prng::WyRand;
 use bevy_rand::plugin::EntropyPlugin;
 
 mod app_state;
-mod bundle;
-mod components;
 mod constant;
 mod error;
-mod plugins;
-mod resources;
-mod state;
-mod structs;
-mod util;
 
 use app_state::{
     game::plugin::game_plugin_group::GamePluginGroup, title_menu::plugin::TitleMenuPlugin,
 };
-use constant::layout::{WINDOW_HEIGHT, WINDOW_WIDTH};
+use constant::layout::WINDOW;
 
 fn main() {
     let window = Window {
         title: "2048".to_string(),
-        resolution: (WINDOW_WIDTH, WINDOW_HEIGHT).into(),
+        resolution: (WINDOW.width, WINDOW.height).into(),
         ..default()
     };
 

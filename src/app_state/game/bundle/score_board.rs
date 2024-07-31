@@ -1,12 +1,9 @@
 use bevy::prelude::*;
 
-use crate::{
-    components::score_board::ScoreBoard,
-    components::score_text::ScoreText,
-    constant::{
-        color, font,
-        layout::{MAIN_BOARD_WIDTH, SCORE_BOARD_HEIGHT},
-    },
+use super::super::{
+    component::score_board::ScoreBoard,
+    component::score_text::ScoreText,
+    constant::{color, font, layout},
 };
 
 #[derive(Bundle)]

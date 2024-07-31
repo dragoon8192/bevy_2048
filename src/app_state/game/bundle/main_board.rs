@@ -1,5 +1,5 @@
-use crate::{
-    components::{main_board::MainBoard, position::Position},
+use super::super::{
+    component::{main_board::MainBoard, position::Position},
     constant::{
         color,
         layout::{
