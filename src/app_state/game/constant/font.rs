@@ -1,4 +1,5 @@
-use crate::constant::font;
+pub use crate::constant::font::{FontSize, TextStyle};
 
-pub const HEADER: font::Font = font::Font::new(font::Size::Large);
-pub const BODY: font::Font = font::Font::new(font::Size::Medium);
+pub const HEADER: TextStyle = TextStyle::new(FontSize::Large);
+pub const BODY: TextStyle = TextStyle::new(FontSize::Medium);
+pub const TILE: TextStyle = TextStyle::new(FontSize::Large);

@@ -1,1 +1,1 @@
-pub use crate::constant::layout::{BODY, HEADER};
+pub use crate::constant::layout::{BODY, HEADER, WINDOW};

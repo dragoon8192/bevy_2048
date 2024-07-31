@@ -1,23 +1,22 @@
 use bevy::{ecs::query::QueryEntityError, prelude::*};
 
-use crate::{
-    components::{position::Position, score_text::ScoreText, tile::Tile},
-    error::handle_query_entity_errors,
-    plugins::calculate::TileMovementEvent,
-    resources::score::Score,
-    state,
+use super::super::{
+    component::{position::Position, score_text::ScoreText, tile::Tile},
+    plugin::calculate::TileMovementEvent,
+    resource::score,
 };
+use crate::{app_state, error::handle_query_entity_errors};
 
 pub struct MovementPlugin;
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
-            OnEnter(state::App::Game(state::Game::Movement)),
+            OnEnter(app_state::App::Game(app_state::Game::Movement)),
             (
                 move_tiles.pipe(handle_query_entity_errors),
                 update_tiles.pipe(handle_query_entity_errors),
                 update_score.pipe(handle_query_entity_errors),
-                state::App::Game(state::Game::Spawn).set_next(),
+                app_state::App::Game(app_state::Game::Spawn).set_next(),
             )
                 .chain(),
         );
@@ -28,7 +27,7 @@ pub fn move_tiles(
     mut tile_move_evr: EventReader<TileMovementEvent>,
     mut query: Query<(&mut Position, &mut Tile)>,
     mut commands: Commands,
-    mut score: ResMut<Score>,
+    mut score: ResMut<score::Score>,
 ) -> Result<(), QueryEntityError> {
     dbg!("System: move_tiles");
     for ev in tile_move_evr.read() {
@@ -71,7 +70,7 @@ pub fn update_tiles(
 
 pub fn update_score(
     mut query: Query<&mut Text, With<ScoreText>>,
-    score: Res<Score>,
+    score: Res<score::Score>,
 ) -> Result<(), QueryEntityError> {
     let mut text = query.single_mut();
     text.sections[0].value = score.to_string();

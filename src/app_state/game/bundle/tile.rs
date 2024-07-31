@@ -1,9 +1,8 @@
 use bevy::prelude::*;
 use bevy::text::{Text, Text2dBounds};
 
-use crate::components::main_board::MainBoard;
-use crate::{
-    components::{position::Position, tile::Tile},
+use super::super::{
+    component::{main_board::MainBoard, position::Position, tile::Tile},
     constant::{color, font, layout},
 };
 
@@ -33,7 +32,7 @@ impl Default for TileBundle {
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
                     color: Color::from(tile),
-                    custom_size: Some(layout::TILE_SIZE_2D),
+                    custom_size: Some(layout::TILE.size_2d()),
                     ..default()
                 },
                 transform: position.into(),
@@ -56,8 +55,8 @@ impl TileBundle {
             self.tile.to_string(),
             TextStyle {
                 font,
-                font_size: font::size::MAIN,
-                color: color::text::MAIN,
+                font_size: font::TILE.font_size.into(),
+                color: color::text::TILE,
             },
         );
         return move |parent| {
@@ -66,8 +65,8 @@ impl TileBundle {
                 transform: Transform::from_xyz(0.0, 0.0, 5.0),
                 text_2d_bounds: Text2dBounds {
                     size: Vec2 {
-                        x: font::size::MAIN,
-                        y: font::size::MAIN,
+                        x: font::TILE.font_size.into(),
+                        y: font::TILE.font_size.into(),
                     },
                 },
                 ..default()
@@ -90,7 +89,7 @@ pub fn spawn_tiles(
     asset_server: Res<AssetServer>,
 ) {
     for ev in tile_spawn_evr.read() {
-        let font = asset_server.load(font::NAME);
+        let font = asset_server.load(font::TILE.font);
         let tile_bundle = TileBundle::new(ev.tile, ev.position);
         let child = commands
             .spawn(tile_bundle.clone())

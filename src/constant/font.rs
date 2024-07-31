@@ -1,42 +1,50 @@
-pub const MAIN_FONT_ASSET_PATH: &str = "fonts/Kenney Space.ttf";
+use bevy::asset::AssetPath;
 
-pub enum Size {
+#[derive(Default, Copy, Clone)]
+pub enum FontSize {
     Large,
+    #[default]
     Medium,
     Small,
     Px(f32),
 }
 
-impl From<Size> for f32 {
-    fn from(value: Size) -> Self {
+impl From<FontSize> for f32 {
+    fn from(value: FontSize) -> Self {
         return match value {
-            Size::Large => 60.0,
-            Size::Medium => 40.0,
-            Size::Small => 30.0,
-            Size::Px(px) => px,
+            FontSize::Large => 60.0,
+            FontSize::Medium => 40.0,
+            FontSize::Small => 30.0,
+            FontSize::Px(px) => px,
         };
     }
 }
 
-pub struct Font {
-    asset: String,
-    size: Size,
+#[derive(Default, Clone, Copy)]
+pub enum Font {
+    #[default]
+    Main,
 }
 
-impl Default for Font {
-    fn default() -> Self {
-        return Self {
-            asset: MAIN_FONT_ASSET_PATH.into(),
-            size: Size::Medium,
+impl From<Font> for AssetPath<'static> {
+    fn from(value: Font) -> Self {
+        return match value {
+            Font::Main => "fonts/Kenney Space.ttf".into(),
         };
     }
 }
 
-impl Font {
-    pub fn new(size: Size) -> Self {
+#[derive(Default, Copy, Clone)]
+pub struct TextStyle {
+    pub font: Font,
+    pub font_size: FontSize,
+}
+
+impl TextStyle {
+    pub const fn new(font_size: FontSize) -> Self {
         return Self {
-            size,
-            ..Default::default()
+            font_size,
+            font: Font::Main,
         };
     }
 }

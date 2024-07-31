@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
 use super::constant::{color, font, layout};
-use crate::constant::layout as global_layout;
 
 #[derive(Bundle)]
 pub struct Screen {
@@ -13,8 +12,8 @@ impl Default for Screen {
         return Self {
             node_bundle: NodeBundle {
                 style: Style {
-                    width: Val::Px(global_layout::WINDOW_WIDTH),
-                    height: Val::Px(global_layout::WINDOW_HEIGHT),
+                    width: Val::Px(layout::WINDOW.width),
+                    height: Val::Px(layout::WINDOW.height),
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceBetween,
@@ -49,13 +48,13 @@ impl Default for Header {
         return Self {
             node: NodeBundle {
                 style: Style {
-                    width: Val::Px(layout::header::WIDTH),
-                    height: Val::Px(layout::header::HEIGHT),
+                    width: Val::Px(layout::HEADER.width),
+                    height: Val::Px(layout::HEADER.height),
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::Center,
                     ..default()
                 },
-                background_color: BackgroundColor(color::MAIN),
+                background_color: BackgroundColor(color::background::MAIN),
                 ..default()
             },
         };
@@ -69,7 +68,7 @@ impl Header {
                 "2048.rs",
                 TextStyle {
                     font: font.clone(),
-                    font_size: font::size::HEADER,
+                    font_size: font::HEADER.font_size.into(),
                     color: color::text::HEADER,
                 },
             ));
@@ -87,14 +86,14 @@ impl Default for Body {
         return Self {
             node: NodeBundle {
                 style: Style {
-                    width: Val::Px(layout::body::WIDTH),
-                    height: Val::Px(layout::body::HEIGHT),
+                    width: Val::Px(layout::BODY.width),
+                    height: Val::Px(layout::BODY.height),
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceAround,
                     ..default()
                 },
-                background_color: BackgroundColor(color::MAIN),
+                background_color: BackgroundColor(color::background::MAIN),
                 ..default()
             },
         };

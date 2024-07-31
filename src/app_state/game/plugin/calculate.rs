@@ -4,13 +4,13 @@ use bevy::prelude::*;
 use std::collections::VecDeque;
 use std::result::Result;
 
-use crate::components::position::Position;
-use crate::components::tile::Tile;
-use crate::error::handle_query_entity_errors;
-use crate::plugins::input::PlayerInputEvent;
-use crate::state;
-use crate::structs::grid_array::{GridArray, RotatedGridArray};
-use crate::structs::quater_turn::QuarterTurn;
+use super::super::{
+    component::{position::Position, tile::Tile},
+    plugin::input::PlayerInputEvent,
+    util::{grid_array, quarter_turn},
+};
+
+use crate::{app_state, error::handle_query_entity_errors};
 
 pub struct CalculatePlugin;
 
@@ -19,11 +19,11 @@ impl Plugin for CalculatePlugin {
         app.add_event::<SlicedMovementEvent>()
             .add_event::<TileMovementEvent>()
             .add_systems(
-                OnEnter(state::App::Game(state::Game::Calculate)),
+                OnEnter(app_state::App::Game(app_state::Game::Calculate)),
                 (
                     handle_player_input,
                     calc_sliced_movement.pipe(handle_query_entity_errors),
-                    state::App::Game(state::Game::Movement).set_next(),
+                    app_state::App::Game(app_state::Game::Movement).set_next(),
                 )
                     .chain(),
             );
@@ -31,19 +31,19 @@ impl Plugin for CalculatePlugin {
 }
 
 #[derive(Event, Eq, PartialEq)]
-pub struct SlicedMovementEvent(Vec<Option<Entity>>, QuarterTurn);
+pub struct SlicedMovementEvent(Vec<Option<Entity>>, quarter_turn::QuarterTurn);
 
 #[derive(Event, Eq, PartialEq)]
 pub enum TileMovementEvent {
-    OneStep(Entity, QuarterTurn),
-    Merge(Entity, Entity, QuarterTurn),
+    OneStep(Entity, quarter_turn::QuarterTurn),
+    Merge(Entity, Entity, quarter_turn::QuarterTurn),
 }
 
 // 盤面の状態を Entity と紐づけて取得
 pub fn get_tiles_layout_with_entity(
     lens: &mut QueryLens<(Entity, &Position)>,
-) -> GridArray<Option<Entity>> {
-    let mut tiles_layout: GridArray<Option<Entity>> = GridArray::new(None);
+) -> grid_array::GridArray<Option<Entity>> {
+    let mut tiles_layout: grid_array::GridArray<Option<Entity>> = grid_array::GridArray::new(None);
     for (e, pos) in lens.query().iter() {
         tiles_layout.0[pos.x][pos.y] = Some(e);
     }
@@ -62,19 +62,20 @@ pub fn handle_player_input(
         // tiles_layout[x][y] にアクセスするので、行列の並び方と 90deg ずれることに注意
         // 回転させなければ下に落ちる
         // ex: 反時計回りに 90deg 回転させて考えることで左に落ちる
-        let turn: QuarterTurn = match ev {
-            PlayerInputEvent::Down => QuarterTurn::Deg000,
-            PlayerInputEvent::Left => QuarterTurn::Deg090,
-            PlayerInputEvent::Up => QuarterTurn::Deg180,
-            PlayerInputEvent::Right => QuarterTurn::Deg270,
+        let turn: quarter_turn::QuarterTurn = match ev {
+            PlayerInputEvent::Down => quarter_turn::QuarterTurn::Deg000,
+            PlayerInputEvent::Left => quarter_turn::QuarterTurn::Deg090,
+            PlayerInputEvent::Up => quarter_turn::QuarterTurn::Deg180,
+            PlayerInputEvent::Right => quarter_turn::QuarterTurn::Deg270,
         };
         // 盤面の状態の取得
-        let tiles_layout: RotatedGridArray<Option<Entity>> = RotatedGridArray {
-            grid_array: get_tiles_layout_with_entity(
-                &mut query.transmute_lens::<(Entity, &Position)>(),
-            ),
-            turn,
-        };
+        let tiles_layout: grid_array::RotatedGridArray<Option<Entity>> =
+            grid_array::RotatedGridArray {
+                grid_array: get_tiles_layout_with_entity(
+                    &mut query.transmute_lens::<(Entity, &Position)>(),
+                ),
+                turn,
+            };
         let vec: Vec<Vec<Option<Entity>>> = tiles_layout.into();
         // 動いた方向にスライスしてそれぞれについて SlicedMovementEvent を発行
         for down_axis in vec.into_iter() {
@@ -85,7 +86,7 @@ pub fn handle_player_input(
 
 fn shift_tiles_one_step(
     tile_entitys: Vec<Option<Entity>>,
-    turn: QuarterTurn,
+    turn: quarter_turn::QuarterTurn,
     tile_move_evw: &mut EventWriter<TileMovementEvent>,
 ) {
     for option in tile_entitys {
@@ -97,7 +98,7 @@ fn shift_tiles_one_step(
 
 fn calc_tiles_slice(
     tile_entitys: &mut VecDeque<Option<Entity>>,
-    turn: QuarterTurn,
+    turn: quarter_turn::QuarterTurn,
     tile_move_evw: &mut EventWriter<TileMovementEvent>,
     query: &Query<&Tile>,
 ) -> Result<(), QueryEntityError> {

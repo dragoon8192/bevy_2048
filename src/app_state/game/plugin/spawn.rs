@@ -4,27 +4,29 @@ use bevy_rand::resource::GlobalEntropy;
 use rand_core::RngCore;
 use std::collections::BTreeSet;
 
-use crate::bundle::tile::{spawn_tiles, TileSpawnEvent};
-use crate::components::position::Position;
-use crate::components::tile::Tile;
-use crate::state;
-use crate::util::position::{board_is_full, get_positions_complement_set};
+use super::super::{
+    bundle::tile::{spawn_tiles, TileSpawnEvent},
+    component::{position::Position, tile::Tile},
+    util::position::{board_is_full, get_positions_complement_set},
+};
+
+use crate::app_state;
 
 pub struct SpawnPlugin;
 
 impl Plugin for SpawnPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
-            OnEnter(state::App::Game(state::Game::Spawn)),
+            OnEnter(app_state::App::Game(app_state::Game::Spawn)),
             (
                 (
                     create_random_tile,
                     spawn_tiles,
-                    state::App::Game(state::Game::Input).set_next(),
+                    app_state::App::Game(app_state::Game::Input).set_next(),
                 )
                     .chain()
                     .run_if(not(board_is_full)),
-                state::App::Game(state::Game::GameOver)
+                app_state::App::Game(app_state::Game::GameOver)
                     .set_next()
                     .run_if(board_is_full),
             ),

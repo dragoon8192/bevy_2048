@@ -1,5 +1,6 @@
 use bevy::{math::f32, prelude::Vec2};
 
+#[derive(Default)]
 pub struct Rect {
     pub width: f32,
     pub height: f32,
@@ -7,31 +8,22 @@ pub struct Rect {
     pub margin: Option<Margin>,
 }
 
+#[derive(Default)]
 pub struct Margin {
     pub horizontal: f32,
     pub vertical: f32,
 }
 
-impl Default for Rect {
-    fn default() -> Self {
-        return Self {
-            width: 0.0,
-            height: 0.0,
-            border: 0.0,
-            margin: None,
-        };
-    }
-}
-
 impl Rect {
-    pub fn new(width: f32, height: f32) -> Self {
+    pub const fn new(width: f32, height: f32) -> Self {
         return Self {
             width,
             height,
-            ..Default::default()
+            margin: None,
+            border: None,
         };
     }
-    pub fn with_margin(&self, horizontal: f32, vertical: f32) -> Self {
+    pub const fn with_margin(self, horizontal: f32, vertical: f32) -> Self {
         return Self {
             margin: Some(Margin {
                 horizontal,
@@ -40,21 +32,23 @@ impl Rect {
             ..self
         };
     }
-    pub fn with_border(&self, border: f32) -> Self {
+    pub const fn with_border(self, border: f32) -> Self {
         return Self {
             border: Some(border),
             ..self
         };
     }
-    pub fn size_2d(self) {
-        return Vec2::new(self.width, self.rect);
+    pub fn size_2d(self) -> Vec2 {
+        return Vec2::new(self.width, self.height);
     }
 }
 
-pub const WINDOW: Rect = Rect::new(300.0, BODY.height + HEADER.height + HEADER_TO_BODY_MARGIN);
+const WINDOW_WIDTH: f32 = 300.0;
 
-pub const HEADER: Rect = Rect::new(WINDOW.width, 80.0);
-
+pub const WINDOW: Rect = Rect::new(
+    WINDOW_WIDTH,
+    BODY.height + HEADER.height + HEADER_TO_BODY_MARGIN,
+);
+pub const HEADER: Rect = Rect::new(WINDOW_WIDTH, 80.0);
 pub const HEADER_TO_BODY_MARGIN: f32 = 10.0;
-
-pub const BODY: Rect = Rect::new(WINDOW.width, 300.0);
+pub const BODY: Rect = Rect::new(WINDOW_WIDTH, 300.0);

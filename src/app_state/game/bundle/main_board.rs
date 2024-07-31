@@ -1,12 +1,6 @@
 use super::super::{
     component::{main_board::MainBoard, position::Position},
-    constant::{
-        color,
-        layout::{
-            GRID_HEIGHT, GRID_WIDTH, MAIN_AND_SCORE_BOARD_MARGIN, MAIN_BOARD_SIZE_2D,
-            SCORE_BOARD_HEIGHT, TILE_SIZE_2D,
-        },
-    },
+    constant::{color, layout},
 };
 use bevy::prelude::*;
 use itertools::iproduct;
@@ -24,13 +18,13 @@ impl Default for MainBoardBundle {
             marker: MainBoard,
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
-                    color: color::board::MAIN,
-                    custom_size: Some(MAIN_BOARD_SIZE_2D),
+                    color: color::background::MAIN,
+                    custom_size: Some(layout::BODY.size_2d()),
                     ..default()
                 },
                 transform: Transform::from_xyz(
                     0.0,
-                    -(SCORE_BOARD_HEIGHT + MAIN_AND_SCORE_BOARD_MARGIN) / 2.0,
+                    -(layout::HEADER.height + layout::HEADER_TO_BODY_MARGIN) / 2.0,
                     0.0,
                 ),
                 ..default()
@@ -41,7 +35,7 @@ impl Default for MainBoardBundle {
 
 impl MainBoardBundle {
     fn child_builder(parent: &mut ChildBuilder) {
-        for (i, j) in iproduct!(0..GRID_WIDTH, 0..GRID_HEIGHT) {
+        for (i, j) in iproduct!(0..layout::GRID_WIDTH, 0..layout::GRID_WIDTH) {
             parent.spawn(MainBoardTileBundle::new(i, j));
         }
     }
@@ -58,8 +52,8 @@ impl Default for MainBoardTileBundle {
         return Self {
             sprite_bunble: SpriteBundle {
                 sprite: Sprite {
-                    color: color::board::MAIN,
-                    custom_size: Some(TILE_SIZE_2D),
+                    color: color::background::SUB,
+                    custom_size: Some(layout::TILE.size_2d()),
                     ..default()
                 },
                 ..default()

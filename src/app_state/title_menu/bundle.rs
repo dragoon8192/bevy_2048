@@ -74,7 +74,7 @@ impl Header {
                 "2048.rs",
                 TextStyle {
                     font: font.clone(),
-                    font_size: font::size::HEADER,
+                    font_size: font::HEADER.font_size.into(),
                     color: color::text::HEADER,
                 },
             ));
@@ -134,7 +134,7 @@ impl Default for BodyButton {
                     height: Val::Px(layout::BUTTON.height),
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
-                    border: UiRect::all(Val::Px(layout::BUTTON.border)),
+                    border: UiRect::all(Val::Px(layout::BUTTON.border.unwrap_or_default())),
                     ..default()
                 },
                 background_color: color::MAIN.into(),
@@ -164,7 +164,7 @@ impl BodyButton {
                 TextStyle {
                     font,
                     color: color::text::BODY,
-                    font_size: font::size::BODY,
+                    font_size: font::BODY.font_size.into(),
                 },
             ));
         };

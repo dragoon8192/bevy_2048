@@ -1,8 +1,7 @@
 use std::collections::VecDeque;
 use std::fmt::Debug;
 
-use super::quater_turn::QuarterTurn;
-use crate::constant::layout;
+use super::{super::constant::layout, quarter_turn::QuarterTurn};
 
 // grid : GridArray<T> は [0][0] から [GRID_WIDTH - 1][GRID_HEIGHT - 1] までの成分を持つ
 pub struct GridArray<T>(pub [[T; layout::GRID_HEIGHT]; layout::GRID_WIDTH]);

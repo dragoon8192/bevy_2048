@@ -24,8 +24,8 @@ impl Default for ScoreBoardBundle {
             marker: ScoreBoard,
             node_bundle: NodeBundle {
                 style: Style {
-                    width: Val::Px(MAIN_BOARD_WIDTH),
-                    height: Val::Px(SCORE_BOARD_HEIGHT),
+                    width: Val::Px(layout::HEADER.width),
+                    height: Val::Px(layout::HEADER.height),
                     flex_direction: FlexDirection::Row,
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::SpaceBetween,
@@ -34,7 +34,7 @@ impl Default for ScoreBoardBundle {
                     left: Val::Px(0.0),
                     ..default()
                 },
-                background_color: BackgroundColor(color::board::MAIN),
+                background_color: BackgroundColor(color::background::MAIN),
                 ..default()
             },
         };
@@ -45,8 +45,8 @@ impl ScoreBoardBundle {
     fn child_builder(font: Handle<Font>) -> impl FnOnce(&mut ChildBuilder) {
         let style = TextStyle {
             font: font.clone(),
-            font_size: font::size::SUB,
-            color: color::text::MAIN,
+            font_size: font::HEADER.font_size.into(),
+            color: color::text::BODY,
             ..default()
         };
         return move |parent| {
@@ -60,7 +60,7 @@ impl ScoreBoardBundle {
 }
 
 pub fn create_score_board(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let font = asset_server.load("fonts/Kenney Space.ttf");
+    let font = asset_server.load(font::HEADER.font);
     commands
         .spawn(ScoreBoardBundle::default())
         .with_children(ScoreBoardBundle::child_builder(font));
