@@ -14,9 +14,10 @@ mod state;
 mod structs;
 mod util;
 
-use app_state::title_menu::plugin::TitleMenuPlugin;
+use app_state::{
+    game::plugin::game_plugin_group::GamePluginGroup, title_menu::plugin::TitleMenuPlugin,
+};
 use constant::layout::{WINDOW_HEIGHT, WINDOW_WIDTH};
-use plugins::game_plugin_group::GamePluginGroup;
 
 fn main() {
     let window = Window {
