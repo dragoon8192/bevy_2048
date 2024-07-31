@@ -1,4 +1,4 @@
-use crate::score_board::constant::SCORE_BOARD_NUM;
+use crate::app_state::score_board::constant::SCORE_BOARD_NUM;
 use bevy::prelude::*;
 
 #[derive(Resource)]
